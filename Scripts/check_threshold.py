@@ -11,15 +11,15 @@ def extract_embedding(photo_path):
 
 # Define an array of paths to images
 photo_paths = [
-    "./test_photos/Emma Watson/test1.jpg",
-    "./test_photos/Emma Watson/test2.jpg",
-    "./test_photos/Emma Watson/test3.jpg",
-    "./test_photos/Emma Watson/test4.jpg",
-    "./test_photos/Emma Watson/test5.jpg",
-    "./test_photos/Emma Watson/no2.jpg",
-    "./test_photos/Emma Watson/no3.jpg",
-    "./test_photos/Emma Watson/no4.jpg",
-    "./test_photos/Emma Watson/no5.jpg",
+    "./test_photos/Lana Del Rey/test1.jpg",
+    "./test_photos/Lana Del Rey/test2.jpg",
+    "./test_photos/Lana Del Rey/test3.jpg",
+    "./test_photos/Lana Del Rey/test4.jpg",
+    "./test_photos/Lana Del Rey/test5.jpg",
+    "./test_photos/Lana Del Rey/no2.jpg",
+    "./test_photos/Lana Del Rey/no3.jpg",
+    "./test_photos/Lana Del Rey/no4.jpg",
+    "./test_photos/Lana Del Rey/no5.jpg",
     ]
 
 # Initialize the global threshold variable
@@ -53,10 +53,13 @@ def calculate_distances(new_embedding, threshold):
 while threshold <= 1:
     print(f"\nProcessing with threshold: {threshold}")
     for path in photo_paths:
-        print(f"\nProcessing {path}")
         # Extract embedding
         embedding = extract_embedding(path)
-        
+        face_confidence = embedding[0]['face_confidence']
+        if face_confidence < 0.85:
+            print(f"Face not detected in {path}. Confidence: {face_confidence}")
+            continue
+        print(f"\nProcessing {path}")
         # Calculate distances and find the top 3 closest embeddings
         top_matches = calculate_distances(embedding[0]['embedding'], threshold)
         
