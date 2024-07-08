@@ -11,13 +11,11 @@ def extract_embedding(photo_path):
 
 # Define an array of paths to images
 photo_paths = [
-    "./test_photos/test1.jpg",
-    "./test_photos/test2.jpg",
-    "./test_photos/test3.jpg",
-    "./test_photos/test4.jpg",
-    "./test_photos/test5.jpg",
-    "./test_photos/test6.jpg",
-    "./test_photos/test7.jpg",
+    "./test_photos/Fahadh Faasil/test1.jpg",
+    "./test_photos/Fahadh Faasil/test2.jpg",
+    "./test_photos/Fahadh Faasil/test3.jpg"
+  #  "./test_photos/Fahadh Faasil/test4.jpg",
+   # "./test_photos/Fahadh Faasil/test5.jpg"
     ]
 
 # Initialize the global threshold variable
@@ -68,4 +66,4 @@ while threshold <= 0.6:
             print(f"{i}. {name} with Cosine Distance: {dist}")
     
     # Increase the threshold by 0.1
-    threshold += 0.1
+    threshold += 0.05
