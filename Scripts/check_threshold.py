@@ -6,16 +6,20 @@ def extract_embedding(photo_path):
     """
     Extract facial embedding for a given photo.
     """
-    embedding = DeepFace.represent(img_path=photo_path, model_name='Facenet', enforce_detection=False)
+    embedding = DeepFace.represent(img_path=photo_path, model_name='Facenet512', enforce_detection=False)
     return embedding
 
 # Define an array of paths to images
 photo_paths = [
-    "./test_photos/Fahadh Faasil/test1.jpg",
-    "./test_photos/Fahadh Faasil/test2.jpg",
-    "./test_photos/Fahadh Faasil/test3.jpg"
-  #  "./test_photos/Fahadh Faasil/test4.jpg",
-   # "./test_photos/Fahadh Faasil/test5.jpg"
+    "./test_photos/Lana Del Rey/test1.jpg",
+    "./test_photos/Lana Del Rey/test2.jpg",
+    "./test_photos/Lana Del Rey/test3.jpg",
+    "./test_photos/Lana Del Rey/test4.jpg",
+    "./test_photos/Lana Del Rey/test5.jpg",
+    "./test_photos/Lana Del Rey/no2.jpg",
+    "./test_photos/Lana Del Rey/no3.jpg",
+    "./test_photos/Lana Del Rey/no4.jpg",
+    "./test_photos/Lana Del Rey/no5.jpg",
     ]
 
 # Initialize the global threshold variable
@@ -27,7 +31,7 @@ def calculate_distances(new_embedding, threshold):
     Prints the distances for every comparison within the threshold.
     Returns the top 3 closest embeddings based on Cosine distance.
     """
-    collection = database['embeddings']
+    collection = database['Salai_test']
     documents = collection.find({})
     
     distances = []
@@ -43,20 +47,19 @@ def calculate_distances(new_embedding, threshold):
     # Sort by distance
     distances.sort(key=lambda x: x[1])
     
-    # Print all distances within threshold
-    for name, dist in distances:
-        print(f"Comparing with {name}: Cosine Distance = {dist}")
-    
     # Return top 3 closest matches
     return distances[:3]
 
-while threshold <= 0.6:
+while threshold <= 1:
     print(f"\nProcessing with threshold: {threshold}")
     for path in photo_paths:
-        print(f"\nProcessing {path}")
         # Extract embedding
         embedding = extract_embedding(path)
-        
+        face_confidence = embedding[0]['face_confidence']
+        if face_confidence < 0.85:
+            print(f"Face not detected in {path}. Confidence: {face_confidence}")
+            continue
+        print(f"\nProcessing {path}")
         # Calculate distances and find the top 3 closest embeddings
         top_matches = calculate_distances(embedding[0]['embedding'], threshold)
         

@@ -6,14 +6,14 @@ def extract_embedding(photo_path):
     """
     Extract facial embedding for a given photo.
     """
-    embedding = DeepFace.represent(img_path=photo_path, model_name='Facenet', enforce_detection=False)
+    embedding = DeepFace.represent(img_path=photo_path, model_name='Facenet512', enforce_detection=False)
     return embedding
 
 def store_embedding(name, embedding):
     """
     Store the embedding into MongoDB collection.
     """
-    collection = database['embeddings']
+    collection = database['Salai_test']
     document = {"name": name, "embedding": embedding}
     collection.insert_one(document)
     print(f"Stored embedding for {name} in the database.")

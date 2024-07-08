@@ -7,6 +7,8 @@ from scipy.spatial import distance
 
 collection = database['embeddings']
 
+threshold = 0.3;
+
 def capture_image():
     cap = cv2.VideoCapture(0)
 
