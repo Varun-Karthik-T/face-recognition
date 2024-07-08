@@ -17,7 +17,7 @@ def calculate_distances(new_embedding):
     Prints the distances for every comparison.
     Returns the name of the closest embedding based on Cosine distance.
     """
-    collection = database['embedding']
+    collection = database['embeddings']
     documents = collection.find({})
     
     min_cosine_distance = float('inf')

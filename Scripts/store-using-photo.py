@@ -13,7 +13,7 @@ def store_embedding(name, embedding):
     """
     Store the embedding into MongoDB collection.
     """
-    collection = database['embedding']
+    collection = database['embeddings']
     document = {"name": name, "embedding": embedding}
     collection.insert_one(document)
     print(f"Stored embedding for {name} in the database.")
