@@ -6,18 +6,20 @@ def extract_embedding(photo_path):
     """
     Extract facial embedding for a given photo.
     """
-    embedding = DeepFace.represent(img_path=photo_path, model_name='Facenet', enforce_detection=False)
+    embedding = DeepFace.represent(img_path=photo_path, model_name='Facenet512', enforce_detection=False)
     return embedding
 
 # Define an array of paths to images
 photo_paths = [
-    "./test_photos/test1.jpg",
-    "./test_photos/test2.jpg",
-    "./test_photos/test3.jpg",
-    "./test_photos/test4.jpg",
-    "./test_photos/test5.jpg",
-    "./test_photos/test6.jpg",
-    "./test_photos/test7.jpg",
+    "./test_photos/Emma Watson/test1.jpg",
+    "./test_photos/Emma Watson/test2.jpg",
+    "./test_photos/Emma Watson/test3.jpg",
+    "./test_photos/Emma Watson/test4.jpg",
+    "./test_photos/Emma Watson/test5.jpg",
+    "./test_photos/Emma Watson/no2.jpg",
+    "./test_photos/Emma Watson/no3.jpg",
+    "./test_photos/Emma Watson/no4.jpg",
+    "./test_photos/Emma Watson/no5.jpg",
     ]
 
 # Initialize the global threshold variable
@@ -29,7 +31,7 @@ def calculate_distances(new_embedding, threshold):
     Prints the distances for every comparison within the threshold.
     Returns the top 3 closest embeddings based on Cosine distance.
     """
-    collection = database['embeddings']
+    collection = database['Salai_test']
     documents = collection.find({})
     
     distances = []
@@ -45,14 +47,10 @@ def calculate_distances(new_embedding, threshold):
     # Sort by distance
     distances.sort(key=lambda x: x[1])
     
-    # Print all distances within threshold
-    for name, dist in distances:
-        print(f"Comparing with {name}: Cosine Distance = {dist}")
-    
     # Return top 3 closest matches
     return distances[:3]
 
-while threshold <= 0.6:
+while threshold <= 1:
     print(f"\nProcessing with threshold: {threshold}")
     for path in photo_paths:
         print(f"\nProcessing {path}")
@@ -68,4 +66,4 @@ while threshold <= 0.6:
             print(f"{i}. {name} with Cosine Distance: {dist}")
     
     # Increase the threshold by 0.1
-    threshold += 0.1
+    threshold += 0.05
