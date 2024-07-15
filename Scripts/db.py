@@ -8,7 +8,6 @@ load_dotenv(".dev.env")
 db = None
 
 db_url = os.getenv("MONGODB_URI")
-print("string: ", db_url)
 
 client = MongoClient(db_url, server_api=ServerApi('1'))
 
