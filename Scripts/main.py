@@ -1,7 +1,7 @@
 import cv2
 import time
 import os
-from db import db as database
+from Server.db import db as database
 from deepface import DeepFace
 from scipy.spatial import distance
 

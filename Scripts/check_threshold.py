@@ -1,4 +1,4 @@
-from db import db as database
+from Server.db import db as database
 from deepface import DeepFace
 from scipy.spatial import distance
 
@@ -11,15 +11,10 @@ def extract_embedding(photo_path):
 
 # Define an array of paths to images
 photo_paths = [
-    "./test_photos/Lana Del Rey/test1.jpg",
-    "./test_photos/Lana Del Rey/test2.jpg",
-    "./test_photos/Lana Del Rey/test3.jpg",
-    "./test_photos/Lana Del Rey/test4.jpg",
-    "./test_photos/Lana Del Rey/test5.jpg",
-    "./test_photos/Lana Del Rey/no2.jpg",
-    "./test_photos/Lana Del Rey/no3.jpg",
-    "./test_photos/Lana Del Rey/no4.jpg",
-    "./test_photos/Lana Del Rey/no5.jpg",
+    "./test_photos/Salai/1.jpg",
+    "./test_photos/Salai/2.jpg",
+    "./test_photos/Salai/no2.jpg",
+    "./test_photos/Salai/no1.jpg",
     ]
 
 # Initialize the global threshold variable
@@ -59,7 +54,7 @@ while threshold <= 1:
         if face_confidence < 0.85:
             print(f"Face not detected in {path}. Confidence: {face_confidence}")
             continue
-        print(f"\nProcessing {path}")
+        print(f"\nProcessing {path} with face confidence: {face_confidence}")
         # Calculate distances and find the top 3 closest embeddings
         top_matches = calculate_distances(embedding[0]['embedding'], threshold)
         

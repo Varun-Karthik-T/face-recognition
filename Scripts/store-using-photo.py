@@ -1,5 +1,5 @@
 import os
-from db import db as database
+from Server.db import db as database
 from deepface import DeepFace
 
 def extract_embedding(photo_path):

@@ -3,7 +3,7 @@ import time
 from deepface import DeepFace
 from scipy.spatial import distance
 
-from db import db as database
+from Server.db import db as database
 collection = database['embedding']
 
 def capture_image():
