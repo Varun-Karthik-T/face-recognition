@@ -8,6 +8,8 @@ from deepface import DeepFace
 app = Flask(__name__)
 CORS(app)
 
+facenet512_model = DeepFace.build_model("Facenet512")
+
 @app.route('/')
 def home():
     return 'Vanakam da maapla from binary potatoes!'
