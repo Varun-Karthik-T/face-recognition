@@ -36,7 +36,7 @@ def upload_file():
                 highest_confidence_json = result
                 
         if highest_confidence > 0.85:
-            print(f"File uploaded and analyzed successfully. Name: {name}, confidence: {highest_confidence_json["face_confidence"]}")
+            print(f"File uploaded and analyzed successfully. Name: {name}, confidence: {highest_confidence_json['face_confidence']}")
             return jsonify({'message': 'File uploaded and analyzed successfully', 'name': name, 'embedding': highest_confidence_json["embedding"]}), 200
         else:
             return jsonify({'error': 'No face with sufficient confidence found'}), 400
