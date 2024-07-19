@@ -18,9 +18,13 @@ def upload_file():
         return jsonify({'error': 'No file part'}), 400
     file = request.files['image']
     name = request.form.get('name', '')
+    
+    temp_dir = 'temp'
+    if not os.path.exists(temp_dir):
+        os.makedirs(temp_dir)
 
     filename = secure_filename(file.filename)
-    temp_path = os.path.join('temp', filename)
+    temp_path = os.path.join(temp_dir, filename)
     file.save(temp_path)
 
     try:
