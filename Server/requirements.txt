@@ -5,3 +5,4 @@ pymongo==4.6.2
 python-dotenv==1.0.1
 Werkzeug==3.0.1
 deepface==0.0.92
+tf_keras == 2.16.0
