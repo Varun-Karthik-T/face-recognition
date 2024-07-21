@@ -5,7 +5,7 @@ import 'package:mime/mime.dart';
 
 class ApiService {
   static Future<http.Response> uploadImage(File image, String name) async {
-    var uri = Uri.parse("https://face-recognition-uojs.onrender.com/upload");
+    var uri = Uri.parse("");
     var request = http.MultipartRequest('POST', uri);
 
     // Determine the mime type of the file
