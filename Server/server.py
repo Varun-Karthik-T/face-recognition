@@ -12,7 +12,7 @@ facenet512_model = DeepFace.build_model("Facenet512")
 def home():
     return 'Vanakam da maapla from binary potatoes!'
 
-@app.route('/upload', methods=['POST'])
+@app.route('/extract', methods=['POST'])
 def upload_file():
     if 'images' not in request.files:
         return jsonify({'error': 'No file part'}), 400
