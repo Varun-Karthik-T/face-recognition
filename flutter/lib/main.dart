@@ -1,8 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'Pages/home.dart';
-import 'Pages/sample1.dart';
-import 'Pages/sample2.dart';
+import 'Pages/history.dart';
+import 'Pages/people.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -22,8 +22,8 @@ class _SummerProjState extends State<SummerProj> {
 
   static const List<Widget> widgetOptions = <Widget>[
     Home(),
-    Sample1(),
-    Sample2(),
+    History(),
+    People(),
   ];
 
   void _onItemTapped(int index) {
@@ -38,7 +38,10 @@ class _SummerProjState extends State<SummerProj> {
       title: 'Summer Project',
       home: Scaffold(
         appBar: AppBar(
-          title: const Text('Summer Project', style:TextStyle(color: Colors.white)),
+          title: Text(
+            selectedIndex == 0 ? 'Summer Project' : selectedIndex == 1 ? 'History' : 'People',
+            style: const TextStyle(color: Colors.white),
+          ),
           backgroundColor: Colors.lightBlue[800],
         ),
         body: Center(
@@ -51,12 +54,12 @@ class _SummerProjState extends State<SummerProj> {
               label: 'Home',
             ),
             NavigationDestination(
-              icon: Icon(Icons.computer),
-              label: 'Sample1',
+              icon: Icon(Icons.history),
+              label: 'History',
             ),
             NavigationDestination(
-              icon: Icon(Icons.computer),
-              label: 'Sample2',
+              icon: Icon(Icons.people),
+              label: 'People',
             ),
           ],
           backgroundColor: Colors.blue[50],

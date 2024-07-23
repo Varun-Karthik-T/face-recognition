@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:camera/camera.dart';
 import 'dart:io';
-import 'api/api.dart';
+import '../api/api.dart';
 
 class Register extends StatefulWidget {
   const Register({super.key});

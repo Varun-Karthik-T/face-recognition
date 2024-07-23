@@ -5,7 +5,7 @@ import 'package:mime/mime.dart';
 
 class ApiService {
   static Future<http.Response> uploadImage(File image, String name) async {
-    var uri = Uri.parse("");
+    var uri = Uri.parse("http://192.168.103.65:5000/upload");
     var request = http.MultipartRequest('POST', uri);
 
     // Determine the mime type of the file

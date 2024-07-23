@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import '../register_face.dart';
 
 class Home extends StatefulWidget {
   const Home({super.key});
@@ -15,16 +14,7 @@ class _HomeState extends State<Home> {
       body: const Center(
         child: Text('Home Screen'),
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => Register()),
-          );
-        },
-        child:const Icon(Icons.add),
-        backgroundColor: Colors.blue[200],
-      ),
+
     );
   }
 }
