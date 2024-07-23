@@ -191,6 +191,7 @@ cython_debug/
 .history
 .svn/
 migrate_working_dir/
+.vscode
 
 # IntelliJ related
 *.iml
