@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 class History extends StatefulWidget {
   const History({super.key});
@@ -11,17 +12,25 @@ class _HistoryState extends State<History> {
   @override
   Widget build(BuildContext context) {
     Map<String, List<Map<String, String>>> data = {
-      "23-7-2023": [
+      "22-07-2024": [
         {"time": "14:00", "name": "John Smith"},
         {"time": "15:00", "name": "Jane Doe"},
       ],
-      "22-7-2023": [
-        {"time": "12:00", "name": "John Doe"},
+      "23-07-2024": [
+        {"time": "12:00", "name": "John"},
         {"time": "13:00", "name": "Jane Smith"},
+      ],
+      "24-07-2024": [
+        {"time": "10:00", "name": "John Doe"},
+        {"time": "11:00", "name": "Jane"},
       ],
     };
 
     List<String> dates = data.keys.toList();
+    dates.sort((a, b) => b.compareTo(a));
+    DateTime today = DateTime.now();
+    DateTime yesterday = today.subtract(const Duration(days: 1));
+    DateFormat dateFormat = DateFormat('dd-MMM-yyyy');  // Change format to use abbreviated month
 
     return Scaffold(
       body: ListView.builder(
@@ -29,13 +38,23 @@ class _HistoryState extends State<History> {
         itemBuilder: (context, index) {
           String date = dates[index];
           List<Map<String, String>> details = data[date]!;
+          DateTime parsedDate = DateFormat('dd-MM-yyyy').parse(date);
+
+          String displayDate;
+          if (parsedDate.isAtSameMomentAs(DateTime(today.year, today.month, today.day))) {
+            displayDate = "Today";
+          } else if (parsedDate.isAtSameMomentAs(DateTime(yesterday.year, yesterday.month, yesterday.day))) {
+            displayDate = "Yesterday";
+          } else {
+            displayDate = dateFormat.format(parsedDate);  // Format the date with abbreviated month
+          }
 
           return Column(
             children: [
               Padding(
                 padding: const EdgeInsets.all(10.0),
                 child: Text(
-                  date,
+                  displayDate,
                   style: const TextStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.bold,
@@ -90,4 +109,3 @@ class _HistoryState extends State<History> {
     );
   }
 }
-

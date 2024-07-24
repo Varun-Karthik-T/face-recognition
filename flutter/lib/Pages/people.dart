@@ -38,9 +38,9 @@ class PeopleState extends State<People> {
             children: [
               ListTile(
                 leading: CircleAvatar(
-                  backgroundColor: Colors.blue[200],
-                  child:Text('${peopleList[index]["name"]![0]}',
-                  style: TextStyle(
+                  backgroundColor: Colors.blue[400],
+                  child:Text(peopleList[index]["name"]![0],
+                  style:const TextStyle(
                     fontSize: 20,
                     fontWeight: FontWeight.w300,
                     color: Colors.white,
