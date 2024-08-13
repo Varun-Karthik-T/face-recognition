@@ -4,9 +4,7 @@ from db import db as database
 import os
 from pymongo import ReturnDocument
 
-username = "Salai"
-
-def process_and_update_image(file, name):
+def process_and_update_image(file, name, username):
     temp_dir = 'temp'
     if not os.path.exists(temp_dir):
         os.makedirs(temp_dir)
