@@ -19,7 +19,6 @@ def upload_file():
     files = request.files.getlist('images')
     name = request.form.get('name', '')
     username = request.form.get('username', '')
-    
     responses = []
     for file in files:
         response, status = process_and_update_image(file, name, username)
