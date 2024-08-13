@@ -91,11 +91,11 @@ class _RegisterState extends State<Register> {
         final response = await ApiService.uploadImage(_image!, name);
         if (response.statusCode == 200) {
           ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('Image uploaded successfully!')),
+            const SnackBar(content: Text('Image uploaded successfully!')),
           );
         } else {
           ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('Failed to upload image.')),
+            const SnackBar(content: Text('Failed to upload image.')),
           );
         }
       } catch (e) {
@@ -105,7 +105,7 @@ class _RegisterState extends State<Register> {
       }
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('No image selected or name is empty.')),
+        const SnackBar(content: Text('No image selected or name is empty.')),
       );
     }
   }
@@ -182,42 +182,41 @@ class _RegisterState extends State<Register> {
                 ],
               ),
             ),
-
             _image != null
                 ? Column(
-              children: [
-                Container(child: Image.file(_image!),
-                  height: 200,
-                  width: 500,
-                ),
-                TextField(
-                  cursorColor: Colors.lightBlue[900],
-                  textAlign: TextAlign.center,
-
-                  onChanged: (value) {
-                    setState(() {
-                      name = value;
-                    });
-                  },
-                  decoration: const InputDecoration(
-                    hintText: 'Enter person name',
-                  ),
-                ),
-                ElevatedButton(
-                  onPressed: _submitImage,
-                  child: const Text(
-                    'Submit',
-                    style: TextStyle(
-                      color: Colors.blue,
-                    ),
-                  ),
-                ),
-              ],
-            )
+                    children: [
+                      Container(
+                        child: Image.file(_image!),
+                        height: 200,
+                        width: 500,
+                      ),
+                      TextField(
+                        cursorColor: Colors.lightBlue[900],
+                        textAlign: TextAlign.center,
+                        onChanged: (value) {
+                          setState(() {
+                            name = value;
+                          });
+                        },
+                        decoration: const InputDecoration(
+                          hintText: 'Enter person name',
+                        ),
+                      ),
+                      ElevatedButton(
+                        onPressed: _submitImage,
+                        child: const Text(
+                          'Submit',
+                          style: TextStyle(
+                            color: Colors.blue,
+                          ),
+                        ),
+                      ),
+                    ],
+                  )
                 : const Text(
-              'No image selected.',
-              style: TextStyle(color: Colors.grey),
-            ),
+                    'No image selected.',
+                    style: TextStyle(color: Colors.grey),
+                  ),
           ],
         ),
       ),
@@ -250,7 +249,6 @@ class CameraScreen extends StatelessWidget {
             bottom: 20,
             left: 0,
             right: 0,
-
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [

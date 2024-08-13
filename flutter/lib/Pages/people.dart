@@ -38,13 +38,14 @@ class PeopleState extends State<People> {
             children: [
               ListTile(
                 leading: CircleAvatar(
-                  backgroundColor: Colors.blue[200],
-                  child:Text('${peopleList[index]["name"]![0]}',
-                  style: TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.w300,
-                    color: Colors.white,
-                  ),
+                  backgroundColor: Colors.blue[400],
+                  child: Text(
+                    peopleList[index]["name"]![0],
+                    style: const TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.w300,
+                      color: Colors.white,
+                    ),
                   ),
                 ),
                 title: Text(
@@ -74,14 +75,15 @@ class PeopleState extends State<People> {
           );
         },
       ),
-      floatingActionButton: FloatingActionButton(
+      floatingActionButton: FloatingActionButton.extended(
+        label: const Text('Register face'),
         onPressed: () {
           Navigator.push(
             context,
             MaterialPageRoute(builder: (context) => const Register()),
           );
         },
-        child: const Icon(Icons.add),
+        icon: const Icon(Icons.add),
         backgroundColor: Colors.blue[200],
       ),
     );
