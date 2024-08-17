@@ -11,6 +11,10 @@ user_schema = {
                 "bsonType": "string",
                 "description": "must be a string and is required"
             },
+            "email" :{
+                "bsonType": "string",
+                "description": "must be a string"
+            },
             "registered_faces": {
                 "bsonType": "array",
                 "items": {

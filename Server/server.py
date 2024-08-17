@@ -31,6 +31,12 @@ def upload_file():
         return jsonify(responses), 200
     else:
         return jsonify(responses), 400
+
+@app.route('/register', methods=['POST'])
+def register():
+    data = request.json
+    response, status = register_user(data)
+    return jsonify(response), status
     
 
 
