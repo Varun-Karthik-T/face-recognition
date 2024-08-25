@@ -185,10 +185,10 @@ class _RegisterState extends State<Register> {
             _image != null
                 ? Column(
                     children: [
-                      Container(
-                        child: Image.file(_image!),
+                      SizedBox(
                         height: 200,
                         width: 500,
+                        child: Image.file(_image!),
                       ),
                       TextField(
                         cursorColor: Colors.lightBlue[900],
@@ -231,7 +231,7 @@ class CameraScreen extends StatelessWidget {
   final VoidCallback onSwitchCamera;
   final bool isFlashOn;
 
-  const CameraScreen({
+  const CameraScreen({super.key, 
     required this.cameraController,
     required this.onCapture,
     required this.onFlashToggle,
