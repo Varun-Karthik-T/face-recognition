@@ -18,10 +18,10 @@ def upload_file():
         return jsonify({'error': 'No file part'}), 400
     files = request.files.getlist('images')
     name = request.form.get('name', '')
-    
+    username = request.form.get('username', '')
     responses = []
     for file in files:
-        response, status = process_and_update_image(file, name)
+        response, status = process_and_update_image(file, name, username)
         if(status == 200):
             responses.append(response)
         else:
@@ -31,8 +31,15 @@ def upload_file():
         return jsonify(responses), 200
     else:
         return jsonify(responses), 400
+
+@app.route('/register', methods=['POST'])
+def register():
+    data = request.json
+    response, status = register_user(data)
+    return jsonify(response), status
     
-    
+
+
 if __name__ == '__main__':
     app.config['DEBUG'] = False
     app.run(host='0.0.0.0', port=5000)
