@@ -3,42 +3,68 @@ from werkzeug.utils import secure_filename
 from db import db as database
 import os
 import re
+import numpy as np
 from pymongo import ReturnDocument
+from datetime import datetime
+from bson import ObjectId
+from scipy.spatial import distance
 
-def process_and_update_image(file, name, username):
+THRESHOLD = 0.3
+
+def process_and_update_images(files, name, username, relation):
     temp_dir = 'temp'
     if not os.path.exists(temp_dir):
         os.makedirs(temp_dir)
 
-    filename = secure_filename(file.filename)
-    temp_path = os.path.join(temp_dir, filename)
-    file.save(temp_path)
+    embeddings = []
 
-    try:
-        results = DeepFace.represent(img_path=temp_path, model_name="Facenet512", detector_backend="mtcnn")
-        os.remove(temp_path)
-        
-        highest_confidence = 0
-        highest_confidence_json = None
-        
-        for result in results:
-            if result['face_confidence'] > highest_confidence:
-                highest_confidence = result['face_confidence']
-                highest_confidence_json = result
-                
-        if highest_confidence > 0.85:
-            print(f"File analyzed successfully. Name: {name}, confidence: {highest_confidence_json['face_confidence']}")
+    for file in files:
+        filename = secure_filename(file.filename)
+        temp_path = os.path.join(temp_dir, filename)
+        file.save(temp_path)
+
+        try:
+            results = DeepFace.represent(img_path=temp_path, model_name="Facenet512", detector_backend="mtcnn")
+            os.remove(temp_path)
+            
+            highest_confidence = 0
+            highest_confidence_json = None
+            
+            for result in results:
+                if result['face_confidence'] > highest_confidence:
+                    highest_confidence = result['face_confidence']
+                    highest_confidence_json = result
+                    
+            if highest_confidence > 0.85:
+                embeddings.append(highest_confidence_json["embedding"])
+            else:
+                return {'error': f'No face with sufficient confidence found in file {filename}'}, 400
+        except Exception as e:
+            os.remove(temp_path)
+            return {'error': str(e)}, 500
+
+    if embeddings:
+        face_data = {
+            "name": name,
+            "relation": relation,
+            "embeddings": embeddings
+        }
+
+        try:
             collection = database["Users"]
-            document = collection.find_one_and_update({"name": username},{"$push": {"registered_faces": {"name": name, "embedding" : highest_confidence_json["embedding"]}}}, return_document=ReturnDocument.AFTER)
+            document = collection.find_one_and_update(
+                {"name": username},
+                {"$push": {"registered_faces": face_data}},
+                return_document=ReturnDocument.AFTER
+            )
             if document:
-                return {'message': 'File uploaded and analyzed successfully'}, 200
+                return {'message': 'Files uploaded and analyzed successfully'}, 200
             else:
                 return {'error': 'User not found'}, 404
-        else:
-            return {'error': 'No face with sufficient confidence found'}, 400
-    except Exception as e:
-        os.remove(temp_path)
-        return {'error': str(e)}, 500
+        except Exception as e:
+            return {'error': str(e)}, 500
+    else:
+        return {'error': 'No valid embeddings found'}, 400
 
 def register_user(data):
     name = data.get('name')
@@ -69,7 +95,146 @@ def register_user(data):
         if existing_user:
             return {'error': 'User with this email already exists', 'success': False}, 400
 
-        collection.insert_one(user_document)
+        result = collection.insert_one(user_document)
+        user_id = result.inserted_id
+
+        history_document = {
+            "user_id": user_id,
+            "history": []
+        }
+        history_collection = database["History"]
+        history_collection.insert_one(history_document)
+        
+        profile_document = {
+            "user_id" : user_id,
+            "profiles" : []
+        }
+        
+        profile_collection = database["Profiles"]
+        profile_collection.insert_one(profile_document)
+        
+        notification_document = {
+            "user_id" : user_id,
+            "suspicious_activity" : [], 
+            "face_recognition" : []
+        }
+        
+        notification_collection = database["Notifications"]
+        notification_collection.insert_one(notification_document)
+        
         return {'message': 'User registered successfully', 'success': True}, 200
     except Exception as e:
         return {'error': str(e), 'success': False}, 500
+    
+def detect_face(file, username):
+    try:
+        temp_dir = 'temp'
+        if not os.path.exists(temp_dir):
+            os.makedirs(temp_dir)
+
+        filename = secure_filename(file.filename)
+        temp_path = os.path.join(temp_dir, filename)
+        file.save(temp_path)
+
+        embedding = DeepFace.represent(img_path=temp_path, model_name="Facenet512", detector_backend="mtcnn")
+        os.remove(temp_path)
+        return embedding[0]["embedding"], 200
+    except Exception as e:
+        print(f"Error in detecting face: {str(e)}")
+        return {'error': str(e), "success" : False}, 500
+    
+def match_face(username, embedding):
+    users_collection = database['Users']
+    
+    try:
+        user_record = users_collection.find_one({"name": username})
+        if not user_record:
+            return {'error': 'User not found'}, 404
+        registered_faces = user_record.get('registered_faces', [])
+        closest_match = None
+        cosine_distance = None
+        for face in registered_faces:
+            name = face['name']
+            embeddings = face['embeddings']
+            for db_embedding in embeddings:
+                cosine_dist = distance.cosine(embedding, db_embedding)
+                if cosine_dist <= THRESHOLD:
+                    closest_match = name
+                    break
+        if closest_match is None:
+                return {'error': 'No match found', "success" : False}, 404
+        return {
+            'user_id': str(user_record['_id']),
+            'username': username,
+            'closest_match': closest_match,
+            'cosine_distance': cosine_distance
+        }, 200    
+    except Exception as e:
+        print(f"Error in matching face: {str(e)}")
+        return {'error': str(e), "success" : False}, 500
+    
+def insert_history(user_id, name):
+    try:
+        collection = database["History"]
+        today = datetime.utcnow().date()
+
+        user_history = collection.find_one({"user_id": ObjectId(user_id)})
+
+        if not user_history:
+            return {'error': 'User history not found', "success" : False}, 404
+
+        history_entry = next((entry for entry in user_history['history'] if entry['date'].date() == today), None)
+        
+        if history_entry:
+            history_entry['entries'].append({
+                "name": name,
+                "timestamp": datetime.utcnow()
+            })
+        else:
+            new_entry = {
+                "date": datetime.utcnow(),
+                "entries": [{
+                    "name": name,
+                    "timestamp": datetime.utcnow()
+                }]
+            }
+            user_history['history'].append(new_entry)
+        updated_history = collection.find_one_and_update(
+            {"user_id": ObjectId(user_id)},
+            {"$set": {"history": user_history['history']}},
+            return_document=ReturnDocument.AFTER
+        )
+        if updated_history:
+            return {'message': 'History updated successfully', "success" : True}, 200
+        else:
+            return {'error': 'Failed to update history', "success" : False}, 500
+    except Exception as e:
+        print(f"Error in insert_history: {str(e)}")
+        return {'error': str(e), "success" : False}, 500
+    
+def send_notification(user_id, content, type):
+    collection = database["Notifications"]
+    if type == "face_recognition":
+        notification_entry = {
+            "timestamp": datetime.utcnow(),
+            "name": content
+        }
+    else:
+        notification_entry = {
+            "timestamp": datetime.utcnow(),
+            "classification": content
+        }
+
+    try:
+        updated_notification = collection.find_one_and_update(
+            {"user_id": ObjectId(user_id)},
+            {"$push": {"suspicious_activity" if type == "suspicious_activity" else "face_recognition": notification_entry}},
+            return_document=ReturnDocument.AFTER
+        )
+
+        if updated_notification:
+            return {'message': 'Notification sent successfully', "success" : True}, 200
+        else:
+            return {'error': 'Failed to send notification', "success" : False}, 500
+    except Exception as e:
+        return {'error': str(e)}, 500

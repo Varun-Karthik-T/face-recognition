@@ -4,7 +4,7 @@ import os
 from dotenv import load_dotenv
 from models import *
 
-load_dotenv(".dev.env")
+load_dotenv(".env")
 
 db = None
 
@@ -20,14 +20,15 @@ collections_to_create = {
     "Notifications": notifications_schema
 }
 
+try:
+    client.admin.command('ping')
+    print("Pinged your deployment. You successfully connected to MongoDB!")
+except Exception as e:
+    print(e)
+    
 existing_collections = db.list_collection_names()
 
 for collection_name, validator in collections_to_create.items():
     if collection_name not in existing_collections:
         db.create_collection(collection_name, validator=validator)
 
-try:
-    client.admin.command('ping')
-    print("Pinged your deployment. You successfully connected to MongoDB!")
-except Exception as e:
-    print(e)

@@ -19,13 +19,13 @@ def upload_file():
     files = request.files.getlist('images')
     name = request.form.get('name', '')
     username = request.form.get('username', '')
+    relation = request.form.get('relation', '')
     responses = []
-    for file in files:
-        response, status = process_and_update_image(file, name, username)
-        if(status == 200):
-            responses.append(response)
-        else:
-            return jsonify(response), status
+    response, status = process_and_update_images(files, name, username,relation)
+    if(status == 200):
+        responses.append(response)
+    else:
+        return jsonify(response), status
 
     if all(response['message'] for response in responses if 'message' in response):
         return jsonify(responses), 200
@@ -37,6 +37,40 @@ def register():
     data = request.json
     response, status = register_user(data)
     return jsonify(response), status
+
+@app.route('/detect', methods=['POST'])
+def detect():
+    if 'image' not in request.files:
+        return jsonify({'error': 'No image part'}), 400
+    file = request.files['image']
+    username = request.form.get('username', '')
+
+    if not username:
+        return jsonify({'error': 'Username is required'}), 400
+
+    embedding, status = detect_face(file, username)
+    if status != 200:
+        return jsonify(embedding), status
+    print("Embedding extracted")
+
+    match_result, match_status = match_face(username, embedding)
+    if match_status != 200:
+        print("Match failed")
+        return jsonify(match_result), match_status
+    print("Match successful")
+    user_id = match_result.get('user_id')
+    closest_match = match_result.get('closest_match')
+
+    history_result, history_status = insert_history(user_id, closest_match)
+    message, notif_status = send_notification(user_id, closest_match,"face_recognition")
+    if notif_status != 200:
+        return jsonify(message), notif_status
+    
+    if history_status != 200:
+        return jsonify(history_result), history_status
+
+    return jsonify(match_result), match_status
+
     
 
 
