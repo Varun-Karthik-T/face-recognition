@@ -15,12 +15,16 @@ user_schema = {
                 "bsonType": "string",
                 "description": "must be a string"
             },
-            "registered_faces": {
+             "registered_faces": {
                 "bsonType": "array",
                 "items": {
                     "bsonType": "object",
-                    "required": ["name", "relation", "embeddings"],
+                    "required": ["id", "name", "relation", "embeddings"],
                     "properties": {
+                        "id": {
+                            "bsonType": "int",
+                            "description": "must be an integer and is required"
+                        },
                         "name": {
                             "bsonType": "string",
                             "description": "must be a string and is required"
@@ -32,10 +36,9 @@ user_schema = {
                         "embeddings": {
                             "bsonType": "array",
                             "items": {
-                                "bsonType": "array"
-                            },
-                            "maxItems": 5,
-                            "description": "must contain atmost 5 embeddings"
+                                "bsonType": "array",
+                                "description": "must be an array of embeddings"
+                            }
                         }
                     }
                 }
@@ -67,8 +70,12 @@ history_schema = {
                             "bsonType": "array",
                             "items": {
                                 "bsonType": "object",
-                                "required": ["name", "timestamp"],
+                                "required": ["id","name", "timestamp"],
                                 "properties": {
+                                     "id": {
+                                        "bsonType": "int",
+                                        "description": "must be an integer and is required"
+                                    },
                                     "name": {
                                         "bsonType": "string",
                                         "description": "must be a string and is required"

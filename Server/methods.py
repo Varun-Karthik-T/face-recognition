@@ -8,6 +8,7 @@ from pymongo import ReturnDocument
 from datetime import datetime
 from bson import ObjectId
 from scipy.spatial import distance
+from models import profiles_schema
 
 THRESHOLD = 0.3
 
@@ -44,14 +45,21 @@ def process_and_update_images(files, name, username, relation):
             return {'error': str(e)}, 500
 
     if embeddings:
+        collection = database["Users"]
+        user_record = collection.find_one({"name": username})
+        if not user_record:
+            return {'error': 'User not found'}, 404
+
+        new_id = max([face.get('id', 0) for face in user_record.get('registered_faces', [])], default=0) + 1
+
         face_data = {
+            "id": new_id,
             "name": name,
             "relation": relation,
             "embeddings": embeddings
         }
 
         try:
-            collection = database["Users"]
             document = collection.find_one_and_update(
                 {"name": username},
                 {"$push": {"registered_faces": face_data}},
@@ -105,9 +113,11 @@ def register_user(data):
         history_collection = database["History"]
         history_collection.insert_one(history_document)
         
+        profiles = [{"id":i,"profile_name":f"profile_{i}","allowed_people":[]} for i in range(5)]
+        
         profile_document = {
-            "user_id" : user_id,
-            "profiles" : []
+            "user_id": user_id,
+            "profiles": profiles
         }
         
         profile_collection = database["Profiles"]
@@ -162,7 +172,7 @@ def match_face(username, embedding):
                     closest_match = name
                     break
         if closest_match is None:
-                return {'error': 'No match found', "success" : False}, 404
+                return {'error': 'No match found', "success" : False}, 200
         return {
             'user_id': str(user_record['_id']),
             'username': username,
