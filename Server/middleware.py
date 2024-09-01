@@ -104,6 +104,10 @@ def get_registered_faces(user_id):
         user_record = users_collection.find_one({"_id": ObjectId(user_id)}, {"_id": 0, "registered_faces": 1})
         if not user_record:
             return jsonify({"error": "User not found"}), 404
+        registered_faces = user_record.get("registered_faces", [])
+        for face in registered_faces:
+            if 'embeddings' in face:
+                del face['embeddings']
         return jsonify(user_record["registered_faces"]), 200
     except Exception as e:
         print(f"Error in get_registered_faces: {str(e)}")
