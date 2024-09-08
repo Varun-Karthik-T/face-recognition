@@ -76,19 +76,21 @@ def get_profiles(user_id):
 def update_profile(user_id, profile_id):
     profiles_collection = database["Profiles"]
     profile_data = request.json
+    print(" Profile ID: " + profile_id)
 
-    profiles_document = profiles_collection.find_one({"user_id": user_id})
+    profiles_document = profiles_collection.find_one({"user_id": ObjectId(user_id)})
     if not profiles_document:
         return jsonify({"error": "Profiles not found"}), 404
+    print("Profiles found" + str(profiles_document))
 
-    profile_index = next((index for (index, d) in enumerate(profiles_document['profiles']) if d.get('id') == profile_id), None)
+    profile_index = next((index for (index, d) in enumerate(profiles_document['profiles']) if d.get('id') == int(profile_id)), None)
     if profile_index is None:
         return jsonify({"error": "Profile not found"}), 404
 
     profiles_document['profiles'][profile_index].update(profile_data)
 
     updated_document = profiles_collection.find_one_and_update(
-        {"user_id": user_id},
+        {"user_id": ObjectId(user_id)},
         {"$set": {"profiles": profiles_document['profiles']}},
         return_document=ReturnDocument.AFTER
     )
@@ -134,4 +136,26 @@ def delete_registered_face(user_id, person_id):
         return jsonify({"message": "Person deleted successfully"}), 200
     except Exception as e:
         print(f"Error in delete_registered_face: {str(e)}")
+        return jsonify({"error": str(e)}), 500
+
+def get_history(user_id):
+    collection = database["History"]
+    try:
+        user_history = collection.find_one({"user_id": ObjectId(user_id)}, {"_id": 0, "history": 1})
+        if not user_history:
+            return jsonify({"error": "User history not found"}), 404
+        return jsonify(user_history["history"]), 200
+    except Exception as e:
+        print(f"Error in get_history: {str(e)}")
+        return jsonify({"error": str(e)}), 500
+    
+def get_notifications(user_id):
+    collection = database["Notifications"]
+    try:
+        user_notifications = collection.find_one({"user_id": ObjectId(user_id)}, {"_id": 0, "suspicious_activity": 1, "face_recognition": 1})
+        if not user_notifications:
+            return jsonify({"error": "User notifications not found"}), 404
+        return jsonify(user_notifications), 200
+    except Exception as e:
+        print(f"Error in get_notifications: {str(e)}")
         return jsonify({"error": str(e)}), 500

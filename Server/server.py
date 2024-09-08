@@ -30,7 +30,7 @@ def get_profiles_route(user_id):
 
 @app.route('/profiles/<user_id>/<profile_id>', methods=['PUT'])
 def update_profile_route(user_id, profile_id):
-    return update_profile_route(user_id, profile_id)
+    return update_profile(user_id, profile_id)
 
 @app.route('/people/<user_id>', methods=['GET'])
 def get_registered_faces_route(user_id):
@@ -39,6 +39,14 @@ def get_registered_faces_route(user_id):
 @app.route('/people/<user_id>/<person_id>', methods=['DELETE'])
 def delete_registered_face_route(user_id, person_id):
     return delete_registered_face(user_id, person_id)
+
+@app.route('/history/<user_id>', methods=['GET'])
+def get_history_route(user_id):
+    return get_history(user_id)
+
+@app.route('/notifications/<user_id>', methods=['GET'])
+def get_notifications_route(user_id):
+    return get_notifications(user_id)
 
 if __name__ == '__main__':
     app.config['DEBUG'] = False
