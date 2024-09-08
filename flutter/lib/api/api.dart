@@ -66,5 +66,10 @@ class Api {
     } else {
       throw Exception('Failed to load people');
     }
+
+  }
+  static Future<http.Response> fetchHistory() async {
+    var uri = Uri.parse('$apiUrl/history/$user');
+    return await http.get(uri);
   }
 }
