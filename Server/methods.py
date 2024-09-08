@@ -195,25 +195,29 @@ def insert_history(user_id, name):
 
         history_entry = next((entry for entry in user_history['history'] if entry['date'].date() == today), None)
         
+        new_id = max([entry['id'] for history in user_history['history'] for entry in history['entries']], default=0) + 1
+
+        new_entry = {
+            "id": new_id,
+            "name": name,
+            "timestamp": datetime.utcnow()
+        }
+
         if history_entry:
-            history_entry['entries'].append({
-                "name": name,
-                "timestamp": datetime.utcnow()
-            })
+            history_entry['entries'].append(new_entry)
         else:
-            new_entry = {
+            new_history_entry = {
                 "date": datetime.utcnow(),
-                "entries": [{
-                    "name": name,
-                    "timestamp": datetime.utcnow()
-                }]
+                "entries": [new_entry]
             }
-            user_history['history'].append(new_entry)
+            user_history['history'].append(new_history_entry)
+
         updated_history = collection.find_one_and_update(
             {"user_id": ObjectId(user_id)},
             {"$set": {"history": user_history['history']}},
             return_document=ReturnDocument.AFTER
         )
+
         if updated_history:
             return {'message': 'History updated successfully', "success" : True}, 200
         else:

@@ -116,7 +116,8 @@ profiles_schema = {
                         "allowed_people": {
                             "bsonType": "array",
                             "items": {
-                                "bsonType": "string"
+                                "bsonType": "int",
+                                "description": "must be an integer"
                             }
                         }
                     }
