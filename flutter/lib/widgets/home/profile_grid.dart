@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'ProfileCard.dart';
-import 'EditProfiles.dart';
+import 'profile_card.dart';
+import 'edit_profiles.dart';
 
 class ProfileGrid extends StatelessWidget {
   final List<Map<String, List<Map<String, String>>>> profiles;
@@ -19,7 +19,6 @@ class ProfileGrid extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Card(
-      height: 300,
       elevation: 4,
       child: Padding(
         padding: const EdgeInsets.all(16.0),

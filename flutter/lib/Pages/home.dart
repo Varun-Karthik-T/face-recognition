@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
-import '../widgets/home/SuspiciousActivityCard.dart';
-import '../widgets/home/ProfileGrid.dart';
-import '../widgets/home/EditProfiles.dart';
+import '../widgets/home/suspicious_activity_card.dart';
+import '../widgets/home/profile_grid.dart';
 
 class Home extends StatefulWidget {
   const Home({super.key});
@@ -11,6 +10,7 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
+
   List<Map<String, List<Map<String, String>>>> profiles = [
     {"Profile1": [{"John Doe": "Friend"}, {"Joh dae": "Family"}]},
     {"Profile2": [{"Jane Doe": "Friend"}, {"Jane dae": "Family"}]},

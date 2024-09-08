@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import '../utils/register_face.dart';
+import '../widgets/register_face.dart';
+import '../api/api.dart';
 
 class People extends StatefulWidget {
   const People({super.key});
@@ -9,70 +10,82 @@ class People extends StatefulWidget {
 }
 
 class PeopleState extends State<People> {
-  List<Map<String, String>> peopleList = [
-    {"id": "123", "name": "John Doe", "relationship": "Friend"},
-    {"id": "124", "name": "Varun", "relationship": "Family"},
-    {"id": "125", "name": "Salai", "relationship": "Family"},
-    {"id": "126", "name": "Ezhil", "relationship": "Family"},
-    {"id": "127", "name": "John Doe", "relationship": "Friend"},
-    {"id": "128", "name": "Jane Doe", "relationship": "Family"},
-    {"id": "129", "name": "John Smith", "relationship": "Friend"},
-    {"id": "130", "name": "Jane Smith", "relationship": "Family"},
-    {"id": "131", "name": "John Doe", "relationship": "Friend"},
-    {"id": "132", "name": "Jane Doe", "relationship": "Family"},
-    {"id": "133", "name": "John Smith", "relationship": "Friend"},
-    {"id": "134", "name": "Jane Smith", "relationship": "Family"},
-    {"id": "135", "name": "John Doe", "relationship": "Friend"},
-    {"id": "136", "name": "Jane Doe", "relationship": "Family"},
-    {"id": "137", "name": "John Smith", "relationship": "Friend"},
-    {"id": "138", "name": "Jane Smith", "relationship": "Family"},
-  ];
+  Future<List<Map<String, dynamic>>> peopleList = Api.getPeople();
+
+  @override
+  void initState() {
+    super.initState();
+    // Ensure the Future is initialized properly
+    peopleList = Api.getPeople();
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: ListView.builder(
-        itemCount: peopleList.length,
-        itemBuilder: (context, index) {
-          return Column(
-            children: [
-              ListTile(
-                leading: CircleAvatar(
-                  backgroundColor: Colors.blue[400],
-                  child: Text(
-                    peopleList[index]["name"]![0],
-                    style: const TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.w300,
-                      color: Colors.white,
+      body: FutureBuilder<List<Map<String, dynamic>>>(
+        future: peopleList,
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(child: CircularProgressIndicator());
+          } else if (snapshot.hasError) {
+            print('Error occurred: ${snapshot.error}');
+            return Center(child: Text('Error: ${snapshot.error}'));
+          } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+            print('No data received or list is empty.');
+            return const Center(child: Text('No people found.'));
+          } else {
+            print('Data received: ${snapshot.data}');
+
+            if (snapshot.data!.isNotEmpty) {
+              print('First person\'s name: ${snapshot.data![0]["name"]}');
+            }
+
+            return ListView.builder(
+              itemCount: snapshot.data!.length,
+              itemBuilder: (context, index) {
+                var person = snapshot.data![index];
+                return Column(
+                  children: [
+                    ListTile(
+                      leading: CircleAvatar(
+                        backgroundColor: Colors.blue[400],
+                        child: Text(
+                          person["name"][0],
+                          style: const TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.w300,
+                            color: Colors.white,
+                          ),
+                        ),
+                      ),
+                      title: Text(
+                        person["name"],
+                        style: const TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.w600,
+                          fontFamily: 'Roboto',
+                        ),
+                      ),
+                      subtitle: Text(
+                        person["relationship"],
+                        style: const TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.w300,
+                        ),
+                      ),
                     ),
-                  ),
-                ),
-                title: Text(
-                  peopleList[index]["name"]!,
-                  style: const TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.w600,
-                    fontFamily: 'Roboto',
-                  ),
-                ),
-                subtitle: Text(
-                  peopleList[index]["relationship"]!,
-                  style: const TextStyle(
-                    fontSize: 14,
-                    fontWeight: FontWeight.w300,
-                  ),
-                ),
-              ),
-              const Divider(
-                height: 10,
-                thickness: 0.5,
-                indent: 20,
-                endIndent: 20,
-                color: Colors.blueGrey,
-              ),
-            ],
-          );
+                    const Divider(
+                      height: 0,
+                      thickness: 0.5,
+                      indent: 20,
+                      endIndent: 20,
+                      color: Colors.blueGrey,
+                    ),
+                  ],
+                );
+              },
+            );
+          }
         },
       ),
       floatingActionButton: FloatingActionButton.extended(

@@ -17,7 +17,7 @@ class SuspiciousActivityCard extends StatelessWidget {
             Text(
               'Suspicious activity found',
               style: TextStyle(
-                fontSize: 24,
+                fontSize: 20,
                 fontWeight: FontWeight.bold,
                 color: Colors.red,
               ),

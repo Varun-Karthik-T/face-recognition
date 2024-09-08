@@ -2,9 +2,16 @@ import 'package:flutter/material.dart';
 import 'Pages/home.dart';
 import 'Pages/history.dart';
 import 'Pages/people.dart';
+//import 'package:flutter_dotenv/flutter_dotenv.dart';
 
-void main() {
+void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  // try {
+  //   await dotenv.load(fileName: ".env");
+  //   print("Loaded .env file");
+  // } catch (e) {
+  //   print("Error loading .env file: $e");
+  // }
   runApp(const SummerProj());
 }
 
@@ -16,8 +23,8 @@ class SummerProj extends StatefulWidget {
 }
 
 class _SummerProjState extends State<SummerProj> {
-
   int selectedIndex = 0;
+  late PageController _pageController;  // Declare PageController as late
 
   static const List<Widget> widgetOptions = <Widget>[
     Home(),
@@ -25,7 +32,25 @@ class _SummerProjState extends State<SummerProj> {
     People(),
   ];
 
+  @override
+  void initState() {
+    super.initState();
+    // Initialize the PageController
+    _pageController = PageController(initialPage: selectedIndex);
+  }
+
   void _onItemTapped(int index) {
+    setState(() {
+      selectedIndex = index;
+    });
+    _pageController.animateToPage(
+      index,
+      duration: const Duration(milliseconds: 300),
+      curve: Curves.easeInOut,
+    );
+  }
+
+  void _onPageChanged(int index) {
     setState(() {
       selectedIndex = index;
     });
@@ -43,8 +68,10 @@ class _SummerProjState extends State<SummerProj> {
           ),
           backgroundColor: Colors.lightBlue[800],
         ),
-        body: Center(
-          child: widgetOptions.elementAt(selectedIndex),
+        body: PageView(
+          controller: _pageController,
+          onPageChanged: _onPageChanged,
+          children: widgetOptions,
         ),
         bottomNavigationBar: NavigationBar(
           destinations: const [
@@ -68,5 +95,11 @@ class _SummerProjState extends State<SummerProj> {
         ),
       ),
     );
+  }
+
+  @override
+  void dispose() {
+    _pageController.dispose();
+    super.dispose();
   }
 }

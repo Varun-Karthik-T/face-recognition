@@ -52,7 +52,7 @@ class _HistoryState extends State<History> {
           return Column(
             children: [
               Padding(
-                padding: const EdgeInsets.all(10.0),
+                padding: const EdgeInsets.all(5.0),
                 child: Text(
                   displayDate,
                   style: const TextStyle(
@@ -68,7 +68,7 @@ class _HistoryState extends State<History> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Padding(
-                      padding: const EdgeInsets.all(5.0),
+                      padding: const EdgeInsets.all(3.0),
                       child: Column(
                         children: details.asMap().entries.map((entry) {
                           int detailIndex = entry.key;
@@ -79,7 +79,7 @@ class _HistoryState extends State<History> {
                                 title: Text(
                                   detail['name']!,
                                   style: const TextStyle(
-                                    fontSize: 18,
+                                    fontSize: 16,
                                     fontWeight: FontWeight.w600,
                                     fontFamily: 'Roboto',
                                   ),
@@ -88,10 +88,10 @@ class _HistoryState extends State<History> {
                               ),
                               if (detailIndex != details.length - 1)
                                 const Divider(
-                                  height: 3,
+                                  height: 2,
                                   thickness: 0.5,
-                                  indent: 20,
-                                  endIndent: 20,
+                                  indent: 12,
+                                  endIndent: 12,
                                   color: Colors.blueGrey,
                                 ),
                             ],

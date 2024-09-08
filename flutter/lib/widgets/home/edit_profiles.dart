@@ -152,8 +152,9 @@ class _EditProfilesState extends State<EditProfiles> {
                         onPressed: () {
                           _deleteProfile(profileName);
                         },
-                        child: const Text('Delete Profile'),
                         style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
+                        child: const Text('Delete Profile'),
+
                       ),
                     ],
                   ),

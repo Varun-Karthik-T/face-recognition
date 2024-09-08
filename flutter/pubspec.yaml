@@ -36,9 +36,10 @@ dependencies:
   path_provider: ^2.0.11
   path: ^1.8.2
   gap: ^3.0.1
-  external_path: ^1.0.3
+  external_path: ^2.0.1
   media_scanner: ^2.1.0
   intl: ^0.19.0
+  flutter_dotenv: ^5.0.2
 
 
   # The following adds the Cupertino Icons font to your application.
@@ -69,7 +70,6 @@ flutter:
   # included with your application, so that you can use the icons in
   # the material Icons class.
   uses-material-design: true
-
   # To add assets to your application, add an assets section, like this:
   # assets:
   #   - images/a_dot_burr.jpeg

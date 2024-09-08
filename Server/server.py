@@ -41,5 +41,5 @@ def delete_registered_face_route(user_id, person_id):
     return delete_registered_face(user_id, person_id)
 
 if __name__ == '__main__':
-    app.config['DEBUG'] = True
+    app.config['DEBUG'] = False
     app.run(host='0.0.0.0', port=5000)
