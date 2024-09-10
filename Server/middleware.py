@@ -66,12 +66,34 @@ def detect():
 
 def get_profiles(user_id):
     profiles_collection = database["Profiles"]
-    profiles = profiles_collection.find_one({"user_id": ObjectId(user_id)}, {"_id": 0})
-    if profiles:
-        profiles['user_id'] = str(profiles['user_id'])
-        return jsonify(profiles), 200
-    else:
+    users_collection = database["Users"]
+
+    # Retrieve profiles
+    profiles_document = profiles_collection.find_one({"user_id": ObjectId(user_id)}, {"_id": 0})
+    if not profiles_document:
         return jsonify({"error": "Profiles not found"}), 404
+
+    # Retrieve user record to get registered faces
+    user_record = users_collection.find_one({"_id": ObjectId(user_id)}, {"_id": 0, "registered_faces": 1})
+    if not user_record:
+        return jsonify({"error": "User not found"}), 404
+
+    registered_faces = user_record.get("registered_faces", [])
+
+    # Create a dictionary for quick lookup of registered faces by ID
+    registered_faces_dict = {}
+    for face in registered_faces:
+        face_id = face["id"]
+        if "embeddings" in face:
+            del face["embeddings"]
+        registered_faces_dict[face_id] = face
+
+    # Replace IDs in allowed_people with corresponding registered faces
+    for profile in profiles_document["profiles"]:
+        profile["allowed_people"] = [registered_faces_dict.get(person_id, {"id": person_id, "name": "Unknown"}) for person_id in profile["allowed_people"]]
+
+    profiles_document['user_id'] = str(profiles_document['user_id'])
+    return jsonify(profiles_document), 200
 
 def update_profile(user_id, profile_id):
     profiles_collection = database["Profiles"]
