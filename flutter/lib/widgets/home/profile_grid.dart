@@ -1,12 +1,10 @@
 import 'package:flutter/material.dart';
-import 'profile_card.dart';
-import 'edit_profiles.dart';
 
-class ProfileGrid extends StatelessWidget {
-  final List<Map<String, List<Map<String, String>>>> profiles;
+class ProfileGrid extends StatefulWidget {
+  final List<Map<String, dynamic>> profiles;
   final String? selectedProfile;
   final Function(String) onProfileSelected;
-  final Function(List<Map<String, List<Map<String, String>>>>) onEditProfiles;
+  final Function(List<Map<String, dynamic>>) onEditProfiles;
 
   const ProfileGrid({
     super.key,
@@ -15,6 +13,24 @@ class ProfileGrid extends StatelessWidget {
     required this.onProfileSelected,
     required this.onEditProfiles,
   });
+
+  @override
+  _ProfileGridState createState() => _ProfileGridState();
+}
+
+class _ProfileGridState extends State<ProfileGrid> {
+  List<Map<String, dynamic>> profilesToEdit = [];
+
+  @override
+  void initState() {
+    super.initState();
+    profilesToEdit = List.from(widget.profiles);
+  }
+
+  void _saveEditedProfiles() {
+    widget.onEditProfiles(profilesToEdit);
+    Navigator.pop(context); // Close the editing dialog
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -39,29 +55,21 @@ class ProfileGrid extends StatelessWidget {
                   crossAxisCount: 3,
                   childAspectRatio: 1,
                 ),
-                itemCount: profiles.length + 1, // Add 1 for the pencil icon
+                itemCount: widget.profiles.length + 1, // Add 1 for the pencil icon
                 itemBuilder: (context, index) {
-                  if (index < profiles.length) {
+                  if (index < widget.profiles.length) {
                     // Fetch profile name from the list
-                    String profileName = profiles[index].keys.first;
+                    String profileName = widget.profiles[index]['name'];
                     return ProfileCard(
                       profileName: profileName,
-                      isSelected: selectedProfile == profileName,
-                      onTap: () => onProfileSelected(profileName),
+                      isSelected: widget.selectedProfile == profileName,
+                      onTap: () => widget.onProfileSelected(profileName),
                     );
                   } else {
                     // Pencil icon card for editing profiles
                     return GestureDetector(
                       onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => EditProfiles(
-                              profiles: profiles,
-                              onProfilesUpdated: onEditProfiles,
-                            ),
-                          ),
-                        );
+                        _showEditProfilesDialog(context);
                       },
                       child: const Column(
                         mainAxisAlignment: MainAxisAlignment.center,
@@ -85,6 +93,94 @@ class ProfileGrid extends StatelessWidget {
               ),
             ),
           ],
+        ),
+      ),
+    );
+  }
+
+  void _showEditProfilesDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: const Text('Edit Profiles'),
+          content: SizedBox(
+            width: double.maxFinite,
+            child: ListView.builder(
+              shrinkWrap: true,
+              itemCount: profilesToEdit.length,
+              itemBuilder: (context, index) {
+                return ListTile(
+                  title: TextField(
+                    controller: TextEditingController(text: profilesToEdit[index]['name']),
+                    onChanged: (value) {
+                      setState(() {
+                        profilesToEdit[index]['name'] = value;
+                      });
+                    },
+                    decoration: InputDecoration(
+                      labelText: 'Profile Name ${index + 1}',
+                    ),
+                  ),
+                  trailing: IconButton(
+                    icon: const Icon(Icons.delete),
+                    onPressed: () {
+                      setState(() {
+                        profilesToEdit.removeAt(index);
+                      });
+                    },
+                  ),
+                );
+              },
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context); // Cancel edit
+              },
+              child: const Text('Cancel'),
+            ),
+            TextButton(
+              onPressed: () {
+                _saveEditedProfiles(); // Save profiles and close dialog
+              },
+              child: const Text('Save'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+}
+
+// ProfileCard Widget
+class ProfileCard extends StatelessWidget {
+  final String profileName;
+  final bool isSelected;
+  final VoidCallback onTap;
+
+  const ProfileCard({
+    super.key,
+    required this.profileName,
+    required this.isSelected,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Card(
+        elevation: isSelected ? 10 : 4,
+        child: Center(
+          child: Text(
+            profileName,
+            style: TextStyle(
+              fontSize: 16,
+              color: isSelected ? Colors.blue : Colors.black,
+            ),
+          ),
         ),
       ),
     );

@@ -9,7 +9,7 @@ class Api {
   // Method to upload an image to the server
 
 
-  static String apiUrl = 'http://192.168.31.246:5000';
+  static String apiUrl = 'http://127.0.0.1:5000';
   static String user= '66d36a9d42d9a5784e1a59fe';
 
   static Future<http.Response> uploadImage(List<File> images, String name, String relationship) async {
@@ -17,15 +17,21 @@ class Api {
     var request = http.MultipartRequest('POST', uri);
 
     for (var image in images) {
+      // Ensure file exists before proceeding
+      if (!image.existsSync()) {
+        throw Exception("File not found: ${image.path}");
+      }
+
       String? mimeType = lookupMimeType(image.path);
       if (mimeType == null) {
         throw Exception("Could not determine mime type of the image.");
       }
+
       var mimeTypeData = mimeType.split('/');
 
       request.files.add(
         await http.MultipartFile.fromPath(
-          'images[]', // Use 'images[]' to indicate an array of files
+          'images',  // Use 'images' if this is what the server expects
           image.path,
           contentType: MediaType(mimeTypeData[0], mimeTypeData[1]),
         ),
@@ -36,7 +42,11 @@ class Api {
     request.fields['username'] = user;
     request.fields['relation'] = relationship;
 
-    return await http.Response.fromStream(await request.send());
+    // Send the request and handle the response
+    var response = await request.send();
+
+    // Return the response as a regular HTTP response
+    return await http.Response.fromStream(response);
   }
 
 
@@ -71,5 +81,16 @@ class Api {
   static Future<http.Response> fetchHistory() async {
     var uri = Uri.parse('$apiUrl/history/$user');
     return await http.get(uri);
+  }
+
+  static Future<List<Map<String, dynamic>>> fetchProfiles() async {
+    var uri = Uri.parse('$apiUrl/profiles/$user');
+    var response = await http.get(uri);
+
+    if (response.statusCode == 200) {
+      return jsonDecode(response.body);
+    } else {
+      throw Exception('Failed to load profiles');
+    }
   }
 }
