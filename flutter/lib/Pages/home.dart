@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../widgets/home/suspicious_activity_card.dart';
+import '../api/api.dart';
 import '../widgets/home/profile_grid.dart';
 
 class Home extends StatefulWidget {
@@ -10,16 +11,25 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
-
-  List<Map<String, List<Map<String, String>>>> profiles = [
-    {"Profile1": [{"John Doe": "Friend"}, {"Joh dae": "Family"}]},
-    {"Profile2": [{"Jane Doe": "Friend"}, {"Jane dae": "Family"}]},
-    {"Profile3": [{"John Smith": "Friend"}, {"John smi": "Family"}]},
-    {"Profile4": [{"Jane Smith": "Friend"}, {"Jane smi": "Family"}]},
-    {"Profile5": [{"John Doe": "Friend"}, {"John dae": "Family"}]},
-  ];
-
+  List<Map<String, dynamic>> profiles = [];
   String? selectedProfile;
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchProfiles();
+  }
+
+  Future<void> _fetchProfiles() async {
+    try {
+      var data = await Api.fetchProfiles();
+      setState(() {
+        profiles = List<Map<String, dynamic>>.from(data['profiles']);
+      });
+    } catch (e) {
+      print('Error fetching profiles: $e');
+    }
+  }
 
   @override
   Widget build(BuildContext context) {

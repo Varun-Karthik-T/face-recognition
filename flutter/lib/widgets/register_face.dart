@@ -263,7 +263,7 @@ class _RegisterState extends State<Register> {
               child: GridView.builder(
                 itemCount: _images.length,
                 gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 3, // 3 images per row
+                  crossAxisCount: 3,
                   crossAxisSpacing: 4,
                   mainAxisSpacing: 4,
                 ),

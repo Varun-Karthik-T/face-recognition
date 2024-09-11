@@ -18,6 +18,7 @@ def process_and_update_images(files, name, username, relation):
         os.makedirs(temp_dir)
 
     embeddings = []
+    errors = []
 
     for file in files:
         filename = secure_filename(file.filename)
@@ -39,11 +40,12 @@ def process_and_update_images(files, name, username, relation):
             if highest_confidence > 0.85:
                 embeddings.append(highest_confidence_json["embedding"])
             else:
-                return {'error': f'No face with sufficient confidence found in file {filename}'}, 400
+                errors += {'error': f'No face with sufficient confidence found in file {filename}'}
         except Exception as e:
             os.remove(temp_path)
             return {'error': str(e)}, 500
-
+    if errors:
+        return {"success": False,"errors" : errors}, 500
     if embeddings:
         collection = database["Users"]
         user_record = collection.find_one({"name": username})
