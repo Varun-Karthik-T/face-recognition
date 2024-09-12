@@ -24,7 +24,7 @@ class _HomeState extends State<Home> {
     try {
       var data = await Api.fetchProfiles();
       setState(() {
-        profiles = List<Map<String, dynamic>>.from(data['profiles']);
+        //profiles = List<Map<String, dynamic>>.from(data['profiles']);
       });
     } catch (e) {
       print('Error fetching profiles: $e');

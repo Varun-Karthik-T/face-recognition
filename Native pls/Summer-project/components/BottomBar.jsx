@@ -13,9 +13,9 @@ const PeopleRoute = () => <People />;
 const BottomNavBar = () => {
   const [index, setIndex] = useState(0);
   const [routes] = useState([
-    { key: 'home', title: 'Favorites', focusedIcon: 'heart', unfocusedIcon: 'heart-outline'},
-    { key: 'history', title: 'Albums', focusedIcon: 'album' },
-    { key: 'people', title: 'Recents', focusedIcon: 'history' },
+    { key: 'home', title: 'Home', focusedIcon: 'home', unfocusedIcon: 'home-outline' },
+    { key: 'history', title: 'History', focusedIcon: 'history' },
+    { key: 'people', title: 'People', focusedIcon: 'account-multiple', unfocusedIcon: 'account-multiple-outline' },
   ]);
 
   const renderScene = BottomNavigation.SceneMap({
