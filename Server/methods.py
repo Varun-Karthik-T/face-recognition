@@ -42,6 +42,7 @@ def process_and_update_images(files, name, username, relation):
             else:
                 errors.append(f"No face with sufficient confidence found in file {filename}")
         except Exception as e:
+            os.remove(temp_path)
             errors.append(f"Error in processing file: {filename}")
             continue
     if errors:
