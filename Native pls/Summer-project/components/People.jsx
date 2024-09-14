@@ -4,9 +4,8 @@ import {
   Card,
   Text,
   Divider,
-  AnimatedFAB,
+  FAB,
   Avatar,
-  Appbar,
   Button,
 } from "react-native-paper";
 import { getPeople } from "@/api/api";
@@ -14,7 +13,6 @@ import { router } from "expo-router";
 
 export default function People() {
   const [people, setPeople] = useState([]);
-  const [isExtended, setIsExtended] = useState(true)
 
   useEffect(() => {
     fetchPeople();
@@ -46,14 +44,14 @@ export default function People() {
             </View>
           ))}
         </Card>
-        <AnimatedFAB
+        <FAB
           icon={"plus"}
-          label={"Add Person"}
-          extended={isExtended}
           onPress={() => router.push("AddPerson")}
-          visible={true}
-          animateFrom={"right"}
-          style={styles.fabStyle}
+          style={styles.fabAdd}
+        />
+        <FAB
+          icon={"trash-can"}
+          style={styles.fabRemove}
         />
       </View>
     </>
@@ -82,10 +80,15 @@ const styles = StyleSheet.create({
     flexDirection: "column",
     padding: 10,
   },
-  fabStyle: {
-    bottom: 16,
-    right: 16,
+  fabAdd: {
     position: "absolute",
+    right: 16,
+    bottom: 86,
+  },
+  fabRemove: {
+    position: "absolute",
+    right: 16,
+    bottom: 16,
   },
   peopleName: {
     fontSize: 17,
