@@ -40,10 +40,10 @@ def process_and_update_images(files, name, username, relation):
             if highest_confidence > 0.85:
                 embeddings.append(highest_confidence_json["embedding"])
             else:
-                errors += {'error': f'No face with sufficient confidence found in file {filename}'}
+                errors.append(f"No face with sufficient confidence found in file {filename}")
         except Exception as e:
-            os.remove(temp_path)
-            return {'error': str(e)}, 500
+            errors.append(f"Error in processing file: {filename}")
+            continue
     if errors:
         return {"success": False,"errors" : errors}, 500
     if embeddings:
@@ -68,7 +68,7 @@ def process_and_update_images(files, name, username, relation):
                 return_document=ReturnDocument.AFTER
             )
             if document:
-                return {'message': 'Files uploaded and analyzed successfully'}, 200
+                return {"success":True,'message': 'Files uploaded and analyzed successfully'}, 200
             else:
                 return {'error': 'User not found'}, 404
         except Exception as e:
