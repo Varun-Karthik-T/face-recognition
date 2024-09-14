@@ -8,12 +8,12 @@ import {
   Avatar,
   Appbar,
 } from "react-native-paper";
-import { getPeople } from "@/app/api/api";
+import { getPeople } from "@/api/api";
+import { router } from "expo-router";
 
 export default function People() {
   const [people, setPeople] = useState([]);
-  const [isExtended, setIsExtended] = useState(true);
-  // Remove the unused setIsExtended variable
+  const [isExtended, setIsExtended] = useState(true)
 
   useEffect(() => {
     getPeople().then((response) => {
@@ -23,9 +23,6 @@ export default function People() {
 
   return (
     <>
-      <Appbar.Header>
-        <Appbar.Content title="People" />
-      </Appbar.Header>
       <View style={styles.container}>
         <Card style={styles.peopleContainer}>
           {people.map((person, Index) => (
@@ -47,7 +44,7 @@ export default function People() {
           icon={"plus"}
           label={"Add Person"}
           extended={isExtended}
-          onPress={() => console.log("Pressed")}
+          onPress={() => router.push("AddPerson")}
           visible={true}
           animateFrom={"right"}
           style={styles.fabStyle}

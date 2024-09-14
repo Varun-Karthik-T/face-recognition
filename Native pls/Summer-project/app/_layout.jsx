@@ -1,3 +1,4 @@
+import AppBar from "@/components/AppBar";
 import { Stack } from "expo-router";
 import { PaperProvider } from "react-native-paper";
 
@@ -50,6 +51,7 @@ function RootLayout() {
   return (
     <>
       <PaperProvider theme={theme}>
+        <AppBar />
         <Stack screenOptions={{ headerShown: false }} />
       </PaperProvider>
     </>
