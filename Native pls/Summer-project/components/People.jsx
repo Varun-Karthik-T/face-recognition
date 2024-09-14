@@ -4,29 +4,30 @@ import {
   Card,
   Text,
   Divider,
-  AnimatedFAB,
+  FAB,
   Avatar,
-  Appbar,
+  Button,
 } from "react-native-paper";
-import { getPeople } from "@/app/api/api";
+import { getPeople } from "@/api/api";
+import { router } from "expo-router";
 
 export default function People() {
   const [people, setPeople] = useState([]);
-  const [isExtended, setIsExtended] = useState(true);
-  // Remove the unused setIsExtended variable
 
   useEffect(() => {
+    fetchPeople();
+  }, []);
+
+  const fetchPeople = () => {
     getPeople().then((response) => {
       setPeople(response.data);
     });
-  }, []);
+  }
 
   return (
     <>
-      <Appbar.Header>
-        <Appbar.Content title="People" />
-      </Appbar.Header>
       <View style={styles.container}>
+        <Button onPress={fetchPeople} icon="refresh"> Refresh </Button>
         <Card style={styles.peopleContainer}>
           {people.map((person, Index) => (
             <View key={person.id}>
@@ -43,14 +44,14 @@ export default function People() {
             </View>
           ))}
         </Card>
-        <AnimatedFAB
+        <FAB
           icon={"plus"}
-          label={"Add Person"}
-          extended={isExtended}
-          onPress={() => console.log("Pressed")}
-          visible={true}
-          animateFrom={"right"}
-          style={styles.fabStyle}
+          onPress={() => router.push("AddPerson")}
+          style={styles.fabAdd}
+        />
+        <FAB
+          icon={"trash-can"}
+          style={styles.fabRemove}
         />
       </View>
     </>
@@ -61,6 +62,7 @@ const styles = StyleSheet.create({
   container: {
     flexGrow: 1,
     padding: 15,
+    gap: 10,
   },
   peopleRow: {
     display: "flex",
@@ -78,10 +80,15 @@ const styles = StyleSheet.create({
     flexDirection: "column",
     padding: 10,
   },
-  fabStyle: {
-    bottom: 16,
-    right: 16,
+  fabAdd: {
     position: "absolute",
+    right: 16,
+    bottom: 86,
+  },
+  fabRemove: {
+    position: "absolute",
+    right: 16,
+    bottom: 16,
   },
   peopleName: {
     fontSize: 17,

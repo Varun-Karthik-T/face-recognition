@@ -15,17 +15,8 @@ def upload_file():
     name = request.form.get('name', '')
     username = request.form.get('username', '')
     relation = request.form.get('relation', '')
-    responses = []
     response, status = process_and_update_images(files, name, username,relation)
-    if(status == 200):
-        responses.append(response)
-    else:
-        return jsonify(response), status
-
-    if all(response['message'] for response in responses if 'message' in response):
-        return jsonify(responses), 200
-    else:
-        return jsonify(responses), 400
+    return jsonify(response), status
     
 def register():
     data = request.json

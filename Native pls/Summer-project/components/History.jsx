@@ -1,6 +1,6 @@
 import { View, StyleSheet } from "react-native";
 import { Text, Card, Divider,Appbar } from "react-native-paper";
-import { getHistory } from "@/app/api/api";
+import { getHistory } from "@/api/api";
 import { useEffect, useState } from "react";
 
 function History() {
@@ -14,9 +14,6 @@ function History() {
 
   return (
     <>
-    <Appbar.Header>
-      <Appbar.Content title="History" />
-    </Appbar.Header>
     <View style={styles.container}>
       {history.map((item) => (
         <View key={item.date} style={styles.historyItem}>
