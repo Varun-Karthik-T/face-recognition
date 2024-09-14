@@ -18,3 +18,8 @@ export const getHistory = async () => {
     const response = await api.get(`/history/${user}`);
     return response;
 }
+
+export const getProfiles = async ()=>{
+    const response = await api.get(`/profiles/${user}`);
+    return response;
+}
