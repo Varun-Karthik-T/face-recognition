@@ -1,6 +1,8 @@
 import AppBar from "@/components/AppBar";
 import { Stack } from "expo-router";
 import { PaperProvider } from "react-native-paper";
+import { DataProvider } from "@/contexts/DataContext";
+import Loader from "@/components/Loader";
 
 const theme = {
   colors: {
@@ -50,10 +52,13 @@ const theme = {
 function RootLayout() {
   return (
     <>
-      <PaperProvider theme={theme}>
-        <AppBar />
-        <Stack screenOptions={{ headerShown: false }} />
-      </PaperProvider>
+      <DataProvider>
+        <PaperProvider theme={theme}>
+          <AppBar />
+          <Stack screenOptions={{ headerShown: false }} />
+          <Loader />
+        </PaperProvider>
+      </DataProvider>
     </>
   );
 }

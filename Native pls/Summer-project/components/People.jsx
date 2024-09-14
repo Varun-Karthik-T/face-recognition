@@ -7,6 +7,7 @@ import {
   AnimatedFAB,
   Avatar,
   Appbar,
+  Button,
 } from "react-native-paper";
 import { getPeople } from "@/api/api";
 import { router } from "expo-router";
@@ -16,14 +17,19 @@ export default function People() {
   const [isExtended, setIsExtended] = useState(true)
 
   useEffect(() => {
+    fetchPeople();
+  }, []);
+
+  const fetchPeople = () => {
     getPeople().then((response) => {
       setPeople(response.data);
     });
-  }, []);
+  }
 
   return (
     <>
       <View style={styles.container}>
+        <Button onPress={fetchPeople} icon="refresh"> Refresh </Button>
         <Card style={styles.peopleContainer}>
           {people.map((person, Index) => (
             <View key={person.id}>
@@ -58,6 +64,7 @@ const styles = StyleSheet.create({
   container: {
     flexGrow: 1,
     padding: 15,
+    gap: 10,
   },
   peopleRow: {
     display: "flex",
