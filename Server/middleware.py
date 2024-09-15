@@ -131,10 +131,7 @@ def delete_registered_face(user_id, person_id):
             return jsonify({"error": "User not found"}), 404
 
         registered_faces = user_record.get("registered_faces", [])
-        print()
         updated_faces = [face for face in registered_faces if face.get("id") != person_id]
-        updated_faces_to_print = [{k: v for k, v in face.items() if k != 'embeddings'} for face in updated_faces]
-        print(updated_faces_to_print)
 
         if len(registered_faces) == len(updated_faces):
             print("Person not found")
@@ -170,4 +167,26 @@ def get_notifications(user_id):
         return jsonify(user_notifications), 200
     except Exception as e:
         print(f"Error in get_notifications: {str(e)}")
+        return jsonify({"error": str(e)}), 500
+    
+def set_active_profile(user_id, profile_id):
+    users_collection = database["Users"]
+    try:
+        user_record = users_collection.find_one({"_id": ObjectId(user_id)})
+        if not user_record:
+            return jsonify({"error": "User not found"}), 404
+
+        profiles_collection = database["Profiles"]
+        profile_record = profiles_collection.find_one({"user_id": ObjectId(user_id), "profiles.id": int(profile_id)})
+        if not profile_record:
+            return jsonify({"error": "Profile not found"}), 404
+
+        users_collection.update_one(
+            {"_id": ObjectId(user_id)},
+            {"$set": {"active_profile_id": int(profile_id)}}
+        )
+
+        return jsonify({"message": "Active profile set successfully"}), 200
+    except Exception as e:
+        print(f"Error in set_active_profile: {str(e)}")
         return jsonify({"error": str(e)}), 500

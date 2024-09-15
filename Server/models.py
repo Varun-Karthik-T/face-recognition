@@ -15,6 +15,10 @@ user_schema = {
                 "bsonType": "string",
                 "description": "must be a string"
             },
+            "active_profile_id" :{
+                "bsonType": "int",
+                "description": "must be an integer"
+            },
              "registered_faces": {
                 "bsonType": "array",
                 "items": {
@@ -109,6 +113,10 @@ profiles_schema = {
                     "bsonType": "object",
                     "required": ["profile_name", "allowed_people"],
                     "properties": {
+                        "id": {
+                            "bsonType": "int",
+                            "description": "must be an integer"
+                        },
                         "profile_name": {
                             "bsonType": "string",
                             "description": "must be a string and is required"
