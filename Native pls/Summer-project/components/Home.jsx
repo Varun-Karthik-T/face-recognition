@@ -1,8 +1,10 @@
 import { View, StyleSheet, TouchableOpacity } from "react-native";
-import { Text, Surface, Avatar, Button } from "react-native-paper";
-import { getProfiles } from "@/app/api/api";
+import { Text, Avatar, Card } from "react-native-paper";
+import { getProfiles } from "@/api/api";
 import { useEffect, useState } from "react";
-import { useNavigation } from '@react-navigation/native'; // Assuming you are using React Navigation
+import { useNavigation } from "@react-navigation/native";
+import { Route } from "expo-router/build/Route";
+import { router } from "expo-router";
 
 function Home() {
   const [profiles, setProfiles] = useState([]);
@@ -11,39 +13,53 @@ function Home() {
   useEffect(() => {
     getProfiles().then((response) => {
       setProfiles(response.data.profiles);
-      console.log(response.data);
+   
     });
   }, []);
 
-  const handleEditPress = () => {
-    navigation.navigate('EditProfiles'); // Navigate to EditProfiles screen
-  };
+
 
   return (
     <>
-      <Surface style={styles.container}>
-        <View style={styles.profileRow}>
-          {profiles.slice(0, 3).map((profile) => (
-            <View key={profile.id} style={styles.profileContainer}>
-              <Avatar.Text size={48} label={profile.profile_name[0]} />
-              <Text>{profile.profile_name}</Text>
-            </View>
-          ))}
-        </View>
-        <View style={styles.profileRow}>
-          {profiles.slice(3, 5).map((profile) => (
-            <View key={profile.id} style={styles.profileContainer}>
-              <Avatar.Text size={48} label={profile.profile_name[0]} />
-              <Text>{profile.profile_name}</Text>
-            </View>
-          ))}
-          {/* Edit button as the sixth item */}
-          <TouchableOpacity style={styles.profileContainer} onPress={handleEditPress}>
-            <Avatar.Icon size={48} icon="pencil" />
-            <Text>Edit</Text>
-          </TouchableOpacity>
-        </View>
-      </Surface>
+      <Card>
+        <Card.Content style={styles.susCard}>
+          <Avatar.Icon size={50} icon="alert" />
+          <View style={styles.susText}>
+            <Text style={{ fontSize: 20, fontWeight: "bold" }}>
+              Suspicious Activity
+            </Text>
+            <Text>There is a suspicious activity detected in your house</Text>
+          </View>
+        </Card.Content>
+      </Card>
+      <Card style={styles.container}>
+        <Card.Content>
+          <View style={styles.profileRow}>
+            {profiles.slice(0, 3).map((profile) => (
+              <View key={profile.id} style={styles.profileContainer}>
+                <Avatar.Text size={54} label={profile.profile_name[0]} />
+                <Text>{profile.profile_name}</Text>
+              </View>
+            ))}
+          </View>
+          <View style={styles.profileRow}>
+            {profiles.slice(3, 5).map((profile) => (
+              <View key={profile.id} style={styles.profileContainer}>
+                <Avatar.Text size={54} label={profile.profile_name[0]} />
+                <Text>{profile.profile_name}</Text>
+              </View>
+            ))}
+
+            <TouchableOpacity
+              style={styles.profileContainer}
+              onPress={(pro)=>router.push("EditProfiles")}
+            >
+              <Avatar.Icon size={54} icon="pencil" />
+              <Text>Edit</Text>
+            </TouchableOpacity>
+          </View>
+        </Card.Content>
+      </Card>
     </>
   );
 }
@@ -52,18 +68,33 @@ export default Home;
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    padding: 10,
+   
+    margin: 10,
+    height: 'auto', 
+
+  },
+  susCard: {
+    margin: 10,
+    display: "flex",
+    flexDirection: "row",
+    justifyContent: "space-between",
+    gap: 10,
+    margin: 10,
+  },
+  susText: {
+    fontSize: 20,
+    fontWeight: "bold",
+    paddingRight: 30,
   },
   profileRow: {
     flexDirection: "row",
     justifyContent: "space-around",
-    marginVertical: 10,
+    marginVertical: 12,
+    flexWrap: "wrap", 
   },
   profileContainer: {
     alignItems: "center",
     marginHorizontal: 10,
+    paddingVertical: 10, 
   },
 });
