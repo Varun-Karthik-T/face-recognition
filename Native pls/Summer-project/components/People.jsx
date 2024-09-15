@@ -7,12 +7,14 @@ import {
   FAB,
   Avatar,
   Button,
+  IconButton,
 } from "react-native-paper";
-import { getPeople } from "@/api/api";
+import { getPeople, deletePerson } from "@/api/api";
 import { router } from "expo-router";
 
 export default function People() {
   const [people, setPeople] = useState([]);
+  const [deleteMode, setDeleteMode] = useState(false);
 
   useEffect(() => {
     fetchPeople();
@@ -22,14 +24,24 @@ export default function People() {
     getPeople().then((response) => {
       setPeople(response.data);
     });
-  }
+  };
+
+  const handleDeletePerson = async (personId) => {
+    console.log("Deleting person with ID:", personId);
+    try {
+      await deletePerson(personId);
+      fetchPeople();
+    } catch (error) {
+      console.error("Failed to delete person:", error);
+    }
+  };
 
   return (
     <>
       <View style={styles.container}>
         <Button onPress={fetchPeople} icon="refresh"> Refresh </Button>
         <Card style={styles.peopleContainer}>
-          {people.map((person, Index) => (
+          {people.map((person, index) => (
             <View key={person.id}>
               <View style={styles.peopleRow}>
                 <Avatar.Text size={40} label={person.name[0]} />
@@ -37,8 +49,14 @@ export default function People() {
                   <Text style={styles.peopleName}>{person.name}</Text>
                   <Text style={styles.peopleRelation}>{person.relation}</Text>
                 </View>
+                {deleteMode && (
+                  <IconButton
+                    icon="close"
+                    onPress={() => handleDeletePerson(person.id)}
+                  />
+                )}
               </View>
-              {!(people.length - 1 == Index) && (
+              {!(people.length - 1 === index) && (
                 <Divider bold={true} theme={{ colors: { primary: "black" } }} />
               )}
             </View>
@@ -51,6 +69,7 @@ export default function People() {
         />
         <FAB
           icon={"trash-can"}
+          onPress={() => setDeleteMode(!deleteMode)}
           style={styles.fabRemove}
         />
       </View>
@@ -67,14 +86,15 @@ const styles = StyleSheet.create({
   peopleRow: {
     display: "flex",
     flexDirection: "row",
+    alignItems: "center",
     gap: 28,
     paddingVertical: 10,
   },
   peopleRowTextContent: {
     display: "flex",
     flexDirection: "column",
+    flex: 1,
   },
-
   peopleContainer: {
     display: "flex",
     flexDirection: "column",

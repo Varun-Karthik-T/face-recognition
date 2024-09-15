@@ -24,10 +24,15 @@ export const getProfiles = async () => {
 };
 
 export const addPerson = async (formData) => {
-  const response = await api.post("/people", formData, {
-    headers: {
-      "Content-Type": "multipart/form-data",
-    },
-  });
-  return response;
-};
+    const response = await api.post('/people', formData, {
+        headers: {
+            'Content-Type': 'multipart/form-data',
+        },
+    });
+    return response;
+}
+
+export const deletePerson = async (personId) => {
+    const response = await api.delete(`/people/${user}/${personId}`);
+    return response;
+}
