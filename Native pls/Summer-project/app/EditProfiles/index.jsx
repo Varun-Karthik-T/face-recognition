@@ -32,18 +32,9 @@ function EditProfiles() {
     });
   }, []);
 
-  // const handleEditPress = (index) => {
-  //   setSelectedProfileIndex(index);
-  //   setNewProfileName(profilesToEdit[index].profile_name);
-  //   setEditModalVisible(true);
-  // };
 
-  const handleSaveProfile = () => {
-    const updatedProfiles = [...profilesToEdit];
-    updatedProfiles[selectedProfileIndex].profile_name = newProfileName;
-    setProfilesToEdit(updatedProfiles);
-    setEditModalVisible(false);
-  };
+
+
 
   const handleAddPerson = (index) => {
     setAddPersonModalVisible(true);
@@ -70,24 +61,6 @@ function EditProfiles() {
     });
   };
 
-  const handleDeleteSelected = (profileId) => {
-    const updatedProfiles = profilesToEdit.map((profile) => {
-      if (profile.id === profileId) {
-        return {
-          ...profile,
-          allowed_people: profile.allowed_people.filter(
-            (person) => !selectedPeople[profileId].includes(person.id)
-          ),
-        };
-      }
-      return profile;
-    });
-    setProfilesToEdit(updatedProfiles);
-    setSelectedPeople((prevSelected) => ({
-      ...prevSelected,
-      [profileId]: [],
-    }));
-  };
 
   return (
     <View style={styles.container}>
@@ -124,14 +97,7 @@ function EditProfiles() {
                   <>
                     {item.allowed_people.map((person) => (
                       <View key={person.id} style={styles.memberItem}>
-                        <Checkbox
-                          status={
-                            selectedPeople[item.id]?.includes(person.id)
-                              ? "checked"
-                              : "unchecked"
-                          }
-                          onPress={() => toggleSelectPerson(item.id, person.id)}
-                        />
+                       
                         <List.Item
                           title={person.name}
                           description={person.relation}
@@ -141,13 +107,7 @@ function EditProfiles() {
                         />
                       </View>
                     ))}
-                    <Button
-                      mode="contained"
-                      onPress={() => handleDeleteSelected(item.id)}
-                      disabled={selectedPeople[item.id].length === 0}
-                    >
-                      Delete Selected
-                    </Button>
+
                   </>
                 ) : (
                   <Text style={styles.noMembersText}>No members available</Text>
