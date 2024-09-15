@@ -2,13 +2,11 @@ import { View, StyleSheet, TouchableOpacity } from "react-native";
 import { Text, Avatar, Card } from "react-native-paper";
 import { getProfiles } from "@/api/api";
 import { useEffect, useState } from "react";
-import { useNavigation } from "@react-navigation/native";
 import { Route } from "expo-router/build/Route";
 import { router } from "expo-router";
 
 function Home() {
   const [profiles, setProfiles] = useState([]);
-  const navigation = useNavigation();
 
   useEffect(() => {
     getProfiles().then((response) => {

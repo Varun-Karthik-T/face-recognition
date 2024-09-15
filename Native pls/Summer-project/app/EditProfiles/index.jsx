@@ -19,7 +19,7 @@ function EditProfiles() {
         acc[profile.id] = [];
         return acc;
       }, {});
-      setSelectedPeople(initialSelection); // Initialize selectedPeople state for each profile
+      setSelectedPeople(initialSelection); 
     });
   }, []);
 
@@ -85,17 +85,19 @@ function EditProfiles() {
         renderItem={({ item, index }) => (
           <Card style={styles.card}>
             <View style={styles.profileRow}>
-              <Avatar.Text size={54} label={item.profile_name[0]} />
+              {/* <Avatar.Text size={54} label={item.profile_name[0]} /> */}
               <Text style={styles.profileName}>{item.profile_name}</Text>
               <TouchableOpacity onPress={() => handleEditPress(index)}>
-                <Avatar.Icon size={40} icon="pencil" />
+                <Avatar.Icon size={35} icon="pencil" />
+              </TouchableOpacity>
+              <TouchableOpacity onPress={() => handleEditPress(index)}>
+                <Avatar.Icon size={35} icon="plus" />
               </TouchableOpacity>
               <TouchableOpacity onPress={() => toggleExpandProfile(item.id)}>
-                <Avatar.Icon size={40} icon={expandedProfileId === item.id ? "chevron-up" : "chevron-down"} />
+                <Avatar.Icon size={35} icon={expandedProfileId === item.id ? "chevron-up" : "chevron-down"} />
               </TouchableOpacity>
             </View>
 
-            {/* Dropdown for members */}
             {expandedProfileId === item.id && (
               <View style={styles.membersList}>
                 {item.allowed_people.length > 0 ? (
@@ -171,7 +173,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    padding: 16,
+    // padding: 16,
     gap: 6,
   },
   profileName: {
