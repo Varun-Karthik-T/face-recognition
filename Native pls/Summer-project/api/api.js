@@ -32,6 +32,12 @@ export const addPerson = async (formData) => {
     return response;
 }
 
+export const editProfile = async (profileId, formData) => {
+    const response = await api.put(`/profiles/${user}/${profileId}`, formData, {
+    });
+    return response;
+}
+
 export const deletePerson = async (personId) => {
     const response = await api.delete(`/people/${user}/${personId}`);
     return response;
