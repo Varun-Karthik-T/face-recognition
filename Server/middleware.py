@@ -3,6 +3,7 @@ from db import db as database
 from bson import ObjectId
 from pymongo import ReturnDocument
 from methods import *
+import base64
 
 
 def home():
@@ -45,7 +46,11 @@ def detect():
     user_id = match_result.get('user_id')
     closest_match = match_result.get('closest_match')
 
-    history_result, history_status = insert_history(user_id, closest_match)
+    file.seek(0)
+    image_base64 = base64.b64encode(file.read()).decode('utf-8')
+    print("Image base64 encoded: " + image_base64)
+
+    history_result, history_status = insert_history(user_id, closest_match, image_base64)
     message, notif_status = send_notification(user_id, closest_match,"face_recognition")
     if notif_status != 200:
         return jsonify(message), notif_status

@@ -87,6 +87,10 @@ history_schema = {
                                     "timestamp": {
                                         "bsonType": "date",
                                         "description": "must be a date and is required"
+                                    },
+                                    "image": {
+                                        "bsonType": "string",
+                                        "description": "must be a string (base64 encoded image) and is required"
                                     }
                                 }
                             }
