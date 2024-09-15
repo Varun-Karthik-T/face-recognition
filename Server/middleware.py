@@ -118,6 +118,7 @@ def get_registered_faces(user_id):
     try:
         user_record = users_collection.find_one({"_id": ObjectId(user_id)}, {"_id": 0, "registered_faces": 1})
         if not user_record:
+            print("User not found")
             return jsonify({"error": "User not found"}), 404
         registered_faces = user_record.get("registered_faces", [])
         for face in registered_faces:
@@ -133,12 +134,16 @@ def delete_registered_face(user_id, person_id):
     try:
         user_record = users_collection.find_one({"_id": ObjectId(user_id)})
         if not user_record:
+            print("User not found")
             return jsonify({"error": "User not found"}), 404
 
         registered_faces = user_record.get("registered_faces", [])
+        print(registered_faces)
         updated_faces = [face for face in registered_faces if face.get("id") != person_id]
+        print(updated_faces)
 
         if len(registered_faces) == len(updated_faces):
+            print("Person not found")
             return jsonify({"error": "Person not found"}), 404
 
         users_collection.update_one(
