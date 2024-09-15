@@ -58,28 +58,20 @@ def detect():
 def get_profiles(user_id):
     profiles_collection = database["Profiles"]
     users_collection = database["Users"]
-
-    # Retrieve profiles
     profiles_document = profiles_collection.find_one({"user_id": ObjectId(user_id)}, {"_id": 0})
     if not profiles_document:
         return jsonify({"error": "Profiles not found"}), 404
-
-    # Retrieve user record to get registered faces
     user_record = users_collection.find_one({"_id": ObjectId(user_id)}, {"_id": 0, "registered_faces": 1})
     if not user_record:
         return jsonify({"error": "User not found"}), 404
 
     registered_faces = user_record.get("registered_faces", [])
-
-    # Create a dictionary for quick lookup of registered faces by ID
     registered_faces_dict = {}
     for face in registered_faces:
         face_id = face["id"]
         if "embeddings" in face:
             del face["embeddings"]
         registered_faces_dict[face_id] = face
-
-    # Replace IDs in allowed_people with corresponding registered faces
     for profile in profiles_document["profiles"]:
         profile["allowed_people"] = [registered_faces_dict.get(person_id, {"id": person_id, "name": "Unknown"}) for person_id in profile["allowed_people"]]
 
@@ -131,6 +123,7 @@ def get_registered_faces(user_id):
     
 def delete_registered_face(user_id, person_id):
     users_collection = database["Users"]
+    person_id = int(person_id)
     try:
         user_record = users_collection.find_one({"_id": ObjectId(user_id)})
         if not user_record:
@@ -138,9 +131,10 @@ def delete_registered_face(user_id, person_id):
             return jsonify({"error": "User not found"}), 404
 
         registered_faces = user_record.get("registered_faces", [])
-        print(registered_faces)
+        print()
         updated_faces = [face for face in registered_faces if face.get("id") != person_id]
-        print(updated_faces)
+        updated_faces_to_print = [{k: v for k, v in face.items() if k != 'embeddings'} for face in updated_faces]
+        print(updated_faces_to_print)
 
         if len(registered_faces) == len(updated_faces):
             print("Person not found")
