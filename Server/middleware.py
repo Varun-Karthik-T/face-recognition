@@ -3,6 +3,7 @@ from db import db as database
 from bson import ObjectId
 from pymongo import ReturnDocument
 from methods import *
+import base64
 
 
 def home():
@@ -45,7 +46,11 @@ def detect():
     user_id = match_result.get('user_id')
     closest_match = match_result.get('closest_match')
 
-    history_result, history_status = insert_history(user_id, closest_match)
+    file.seek(0)
+    image_base64 = base64.b64encode(file.read()).decode('utf-8')
+    print("Image base64 encoded: " + image_base64)
+
+    history_result, history_status = insert_history(user_id, closest_match, image_base64)
     message, notif_status = send_notification(user_id, closest_match,"face_recognition")
     if notif_status != 200:
         return jsonify(message), notif_status
@@ -58,28 +63,20 @@ def detect():
 def get_profiles(user_id):
     profiles_collection = database["Profiles"]
     users_collection = database["Users"]
-
-    # Retrieve profiles
     profiles_document = profiles_collection.find_one({"user_id": ObjectId(user_id)}, {"_id": 0})
     if not profiles_document:
         return jsonify({"error": "Profiles not found"}), 404
-
-    # Retrieve user record to get registered faces
     user_record = users_collection.find_one({"_id": ObjectId(user_id)}, {"_id": 0, "registered_faces": 1})
     if not user_record:
         return jsonify({"error": "User not found"}), 404
 
     registered_faces = user_record.get("registered_faces", [])
-
-    # Create a dictionary for quick lookup of registered faces by ID
     registered_faces_dict = {}
     for face in registered_faces:
         face_id = face["id"]
         if "embeddings" in face:
             del face["embeddings"]
         registered_faces_dict[face_id] = face
-
-    # Replace IDs in allowed_people with corresponding registered faces
     for profile in profiles_document["profiles"]:
         profile["allowed_people"] = [registered_faces_dict.get(person_id, {"id": person_id, "name": "Unknown"}) for person_id in profile["allowed_people"]]
 
@@ -131,6 +128,7 @@ def get_registered_faces(user_id):
     
 def delete_registered_face(user_id, person_id):
     users_collection = database["Users"]
+    person_id = int(person_id)
     try:
         user_record = users_collection.find_one({"_id": ObjectId(user_id)})
         if not user_record:
@@ -138,9 +136,7 @@ def delete_registered_face(user_id, person_id):
             return jsonify({"error": "User not found"}), 404
 
         registered_faces = user_record.get("registered_faces", [])
-        print(registered_faces)
         updated_faces = [face for face in registered_faces if face.get("id") != person_id]
-        print(updated_faces)
 
         if len(registered_faces) == len(updated_faces):
             print("Person not found")
@@ -176,4 +172,26 @@ def get_notifications(user_id):
         return jsonify(user_notifications), 200
     except Exception as e:
         print(f"Error in get_notifications: {str(e)}")
+        return jsonify({"error": str(e)}), 500
+    
+def set_active_profile(user_id, profile_id):
+    users_collection = database["Users"]
+    try:
+        user_record = users_collection.find_one({"_id": ObjectId(user_id)})
+        if not user_record:
+            return jsonify({"error": "User not found"}), 404
+
+        profiles_collection = database["Profiles"]
+        profile_record = profiles_collection.find_one({"user_id": ObjectId(user_id), "profiles.id": int(profile_id)})
+        if not profile_record:
+            return jsonify({"error": "Profile not found"}), 404
+
+        users_collection.update_one(
+            {"_id": ObjectId(user_id)},
+            {"$set": {"active_profile_id": int(profile_id)}}
+        )
+
+        return jsonify({"message": "Active profile set successfully"}), 200
+    except Exception as e:
+        print(f"Error in set_active_profile: {str(e)}")
         return jsonify({"error": str(e)}), 500

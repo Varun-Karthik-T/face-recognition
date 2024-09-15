@@ -191,7 +191,7 @@ def match_face(username, embedding):
         print(f"Error in matching face: {str(e)}")
         return {'error': str(e), "success" : False}, 500
     
-def insert_history(user_id, name):
+def insert_history(user_id, name, image):
     try:
         collection = database["History"]
         today = datetime.utcnow().date()
@@ -208,7 +208,8 @@ def insert_history(user_id, name):
         new_entry = {
             "id": new_id,
             "name": name,
-            "timestamp": datetime.utcnow()
+            "timestamp": datetime.utcnow(),
+            "image": image
         }
 
         if history_entry:
