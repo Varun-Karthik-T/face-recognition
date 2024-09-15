@@ -19,6 +19,11 @@ export const getHistory = async () => {
     return response;
 }
 
+export const getProfiles = async ()=>{
+    const response = await api.get(`/profiles/${user}`);
+       return response;
+}
+
 export const addPerson = async (formData) => {
     const response = await api.post('/people', formData, {
         headers: {
