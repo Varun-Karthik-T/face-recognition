@@ -1,11 +1,20 @@
-import React, { useState, useEffect } from 'react';
-import { View, Text, TextInput, FlatList, TouchableOpacity, Modal, StyleSheet } from 'react-native';
-import { Avatar, Button, Card, List, Checkbox } from 'react-native-paper';
-import { getProfiles } from '@/api/api';
+import React, { useState, useEffect } from "react";
+import {
+  View,
+  Text,
+  TextInput,
+  FlatList,
+  TouchableOpacity,
+  Modal,
+  StyleSheet,
+} from "react-native";
+import { Avatar, Button, Card, List, Checkbox } from "react-native-paper";
+import { getProfiles } from "@/api/api";
 
 function EditProfiles() {
   const [profilesToEdit, setProfilesToEdit] = useState([]);
   const [editModalVisible, setEditModalVisible] = useState(false);
+  const [addPersonModalVisible, setAddPersonModalVisible] = useState(false);
   const [selectedProfileIndex, setSelectedProfileIndex] = useState(null);
   const [newProfileName, setNewProfileName] = useState('');
   const [expandedProfileId, setExpandedProfileId] = useState(null);
@@ -19,21 +28,16 @@ function EditProfiles() {
         acc[profile.id] = [];
         return acc;
       }, {});
-      setSelectedPeople(initialSelection); 
+      setSelectedPeople(initialSelection);
     });
   }, []);
 
-  const handleEditPress = (index) => {
-    setSelectedProfileIndex(index);
-    setNewProfileName(profilesToEdit[index].profile_name);
-    setEditModalVisible(true);
-  };
 
-  const handleSaveProfile = () => {
-    const updatedProfiles = [...profilesToEdit];
-    updatedProfiles[selectedProfileIndex].profile_name = newProfileName;
-    setProfilesToEdit(updatedProfiles);
-    setEditModalVisible(false);
+
+
+
+  const handleAddPerson = (index) => {
+    setAddPersonModalVisible(true);
   };
 
   const toggleExpandProfile = (id) => {
@@ -57,24 +61,6 @@ function EditProfiles() {
     });
   };
 
-  const handleDeleteSelected = (profileId) => {
-    const updatedProfiles = profilesToEdit.map((profile) => {
-      if (profile.id === profileId) {
-        return {
-          ...profile,
-          allowed_people: profile.allowed_people.filter(
-            (person) => !selectedPeople[profileId].includes(person.id)
-          ),
-        };
-      }
-      return profile;
-    });
-    setProfilesToEdit(updatedProfiles);
-    setSelectedPeople((prevSelected) => ({
-      ...prevSelected,
-      [profileId]: [],
-    }));
-  };
 
   return (
     <View style={styles.container}>
@@ -87,14 +73,21 @@ function EditProfiles() {
             <View style={styles.profileRow}>
               {/* <Avatar.Text size={54} label={item.profile_name[0]} /> */}
               <Text style={styles.profileName}>{item.profile_name}</Text>
-              <TouchableOpacity onPress={() => handleEditPress(index)}>
+              {/* <TouchableOpacity onPress={() => handleEditPress(index)}>
                 <Avatar.Icon size={35} icon="pencil" />
-              </TouchableOpacity>
-              <TouchableOpacity onPress={() => handleEditPress(index)}>
+              </TouchableOpacity> */}
+              <TouchableOpacity onPress={() => handleAddPerson(index)}>
                 <Avatar.Icon size={35} icon="plus" />
               </TouchableOpacity>
               <TouchableOpacity onPress={() => toggleExpandProfile(item.id)}>
-                <Avatar.Icon size={35} icon={expandedProfileId === item.id ? "chevron-up" : "chevron-down"} />
+                <Avatar.Icon
+                  size={35}
+                  icon={
+                    expandedProfileId === item.id
+                      ? "chevron-up"
+                      : "chevron-down"
+                  }
+                />
               </TouchableOpacity>
             </View>
 
@@ -104,24 +97,17 @@ function EditProfiles() {
                   <>
                     {item.allowed_people.map((person) => (
                       <View key={person.id} style={styles.memberItem}>
-                        <Checkbox
-                          status={selectedPeople[item.id]?.includes(person.id) ? 'checked' : 'unchecked'}
-                          onPress={() => toggleSelectPerson(item.id, person.id)}
-                        />
+                       
                         <List.Item
                           title={person.name}
                           description={person.relation}
-                          left={(props) => <List.Icon {...props} icon="account" />}
+                          left={(props) => (
+                            <List.Icon {...props} icon="account" />
+                          )}
                         />
                       </View>
                     ))}
-                    <Button
-                      mode="contained"
-                      onPress={() => handleDeleteSelected(item.id)}
-                      disabled={selectedPeople[item.id].length === 0}
-                    >
-                      Delete Selected
-                    </Button>
+
                   </>
                 ) : (
                   <Text style={styles.noMembersText}>No members available</Text>
@@ -131,25 +117,6 @@ function EditProfiles() {
           </Card>
         )}
       />
-
-      {/* Modal for editing profile */}
-      <Modal visible={editModalVisible} transparent animationType="slide">
-        <View style={styles.modalContainer}>
-          <View style={styles.modalContent}>
-            <Text style={styles.modalTitle}>Edit Profile</Text>
-            <TextInput
-              value={newProfileName}
-              onChangeText={setNewProfileName}
-              style={styles.input}
-              placeholder="Profile Name"
-            />
-            <Button mode="contained" onPress={handleSaveProfile}>
-              Save
-            </Button>
-            <Button onPress={() => setEditModalVisible(false)}>Cancel</Button>
-          </View>
-        </View>
-      </Modal>
     </View>
   );
 }
@@ -163,17 +130,17 @@ const styles = StyleSheet.create({
   },
   header: {
     fontSize: 24,
-    fontWeight: 'bold',
+    fontWeight: "bold",
     marginBottom: 16,
   },
   card: {
     marginBottom: 12,
   },
   profileRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    // padding: 16,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    padding: 12,
     gap: 6,
   },
   profileName: {
@@ -186,28 +153,28 @@ const styles = StyleSheet.create({
     paddingBottom: 16,
   },
   memberItem: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
   },
   noMembersText: {
     paddingLeft: 16,
     paddingBottom: 16,
-    color: 'gray',
+    color: "gray",
   },
   modalContainer: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
   },
   modalContent: {
     width: 300,
     padding: 16,
-    backgroundColor: 'white',
+    backgroundColor: "white",
     borderRadius: 10,
   },
   modalTitle: {
     fontSize: 20,
-    fontWeight: 'bold',
+    fontWeight: "bold",
     marginBottom: 12,
   },
   input: {

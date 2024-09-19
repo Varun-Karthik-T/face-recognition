@@ -1,8 +1,8 @@
 import { View, StyleSheet, TouchableOpacity } from "react-native";
 import { Text, Avatar, Card } from "react-native-paper";
+import { SafeAreaView } from "react-native-safe-area-context";
 import { getProfiles } from "@/api/api";
 import { useEffect, useState } from "react";
-import { Route } from "expo-router/build/Route";
 import { router } from "expo-router";
 
 function Home() {
@@ -19,15 +19,16 @@ function Home() {
 
   return (
     <>
-      <Card>
+      <Card style={styles.susContainer}>
         <Card.Content style={styles.susCard}>
           <Avatar.Icon size={50} icon="alert" />
-          <View style={styles.susText}>
+          
+          <SafeAreaView style={styles.susText}>
             <Text style={{ fontSize: 20, fontWeight: "bold" }}>
               Suspicious Activity
             </Text>
             <Text>There is a suspicious activity detected in your house</Text>
-          </View>
+          </SafeAreaView>
         </Card.Content>
       </Card>
       <Card style={styles.container}>
@@ -66,23 +67,26 @@ export default Home;
 
 const styles = StyleSheet.create({
   container: {
-   
     margin: 10,
     height: 'auto', 
-
+  },
+  susContainer: {
+    margin: 10,
   },
   susCard: {
-    margin: 10,
     display: "flex",
     flexDirection: "row",
     justifyContent: "space-between",
-    gap: 10,
-    margin: 10,
+    alignItems: "center",
+
+    
+    
   },
   susText: {
+    padding: 10,
     fontSize: 20,
     fontWeight: "bold",
-    paddingRight: 30,
+
   },
   profileRow: {
     flexDirection: "row",
