@@ -195,3 +195,19 @@ def set_active_profile(user_id, profile_id):
     except Exception as e:
         print(f"Error in set_active_profile: {str(e)}")
         return jsonify({"error": str(e)}), 500
+
+def get_active_profile(user_id):
+    users_collection = database["Users"]
+    try:
+        user_record = users_collection.find_one({"_id": ObjectId(user_id)}, {"_id": 0, "active_profile_id": 1})
+        if not user_record:
+            return jsonify({"error": "User not found"}), 404
+
+        active_profile_id = user_record.get("active_profile_id")
+        if active_profile_id is None:
+            return jsonify({"error": "Active profile not set"}), 404
+
+        return jsonify({"active_profile_id": active_profile_id}), 200
+    except Exception as e:
+        print(f"Error in get_active_profile: {str(e)}")
+        return jsonify({"error": str(e)}), 500

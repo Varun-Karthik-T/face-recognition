@@ -8,8 +8,8 @@ function EditProfiles() {
   const [editModalVisible, setEditModalVisible] = useState(false);
   const [selectedProfileIndex, setSelectedProfileIndex] = useState(null);
   const [newProfileName, setNewProfileName] = useState('');
-  const [expandedProfileId, setExpandedProfileId] = useState(null); // For expanding the profile
-  const [selectedPeople, setSelectedPeople] = useState({}); // To track selected people for each profile
+  const [expandedProfileId, setExpandedProfileId] = useState(null);
+  const [selectedPeople, setSelectedPeople] = useState({});
 
   useEffect(() => {
     getProfiles().then((response) => {
