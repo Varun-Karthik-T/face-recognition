@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect,useContext } from "react";
 import { View, StyleSheet } from "react-native";
 import {
   Card,
@@ -11,18 +11,23 @@ import {
 } from "react-native-paper";
 import { getPeople, deletePerson } from "@/api/api";
 import { router } from "expo-router";
+import { DataContext } from "@/contexts/DataContext";
 
 export default function People() {
+  const {setLoading} = useContext(DataContext);
   const [people, setPeople] = useState([]);
   const [deleteMode, setDeleteMode] = useState(false);
 
   useEffect(() => {
+    setLoading(true);
     fetchPeople();
+    
   }, []);
 
   const fetchPeople = () => {
     getPeople().then((response) => {
       setPeople(response.data);
+      setLoading(false);
     });
   };
 

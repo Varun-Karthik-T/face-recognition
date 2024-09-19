@@ -71,13 +71,11 @@ function EditProfiles() {
         renderItem={({ item, index }) => (
           <Card style={styles.card}>
             <View style={styles.profileRow}>
-              {/* <Avatar.Text size={54} label={item.profile_name[0]} /> */}
+             
               <Text style={styles.profileName}>{item.profile_name}</Text>
-              {/* <TouchableOpacity onPress={() => handleEditPress(index)}>
-                <Avatar.Icon size={35} icon="pencil" />
-              </TouchableOpacity> */}
+              
               <TouchableOpacity onPress={() => handleAddPerson(index)}>
-                <Avatar.Icon size={35} icon="plus" />
+                <Avatar.Icon size={35} icon="pencil" />
               </TouchableOpacity>
               <TouchableOpacity onPress={() => toggleExpandProfile(item.id)}>
                 <Avatar.Icon
@@ -117,6 +115,7 @@ function EditProfiles() {
           </Card>
         )}
       />
+      {editModalVisible && <Modal></Modal>}
     </View>
   );
 }

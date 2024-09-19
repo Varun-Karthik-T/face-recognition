@@ -1,15 +1,23 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect ,useContext} from "react";
 import { View, StyleSheet, Image } from "react-native";
 import { Text, Card, Divider } from "react-native-paper";
 import { getHistory } from "@/api/api";
+import { DataContext } from "@/contexts/DataContext";
+
 
 function History() {
   const [history, setHistory] = useState([]);
+  const {setLoading} = useContext(DataContext);
 
   useEffect(() => {
+    setLoading(true);
     getHistory().then((response) => {
+      
       setHistory(response.data);
+      
     });
+   setLoading(false);
+    
   }, []);
 
   return (

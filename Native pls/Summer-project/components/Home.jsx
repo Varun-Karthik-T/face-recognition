@@ -2,33 +2,46 @@ import { View, StyleSheet, TouchableOpacity } from "react-native";
 import { Text, Avatar, Card } from "react-native-paper";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { getProfiles } from "@/api/api";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useContext } from "react";
 import { router } from "expo-router";
+import { DataContext } from "@/contexts/DataContext";
 
 function Home() {
+  const { setLoading } = useContext(DataContext);
   const [profiles, setProfiles] = useState([]);
-
+  const [currentProfile, setCurrentProfile] = useState("HI");
   useEffect(() => {
-    getProfiles().then((response) => {
-      setProfiles(response.data.profiles);
-   
-    });
+    setLoading(true);
+    fetchProfiles();
+    setLoading(false);
   }, []);
 
-
+  const fetchProfiles = () => {
+    getProfiles().then((response) => {
+      setProfiles(response.data.profiles);
+    });
+  };
 
   return (
     <>
       <Card style={styles.susContainer}>
         <Card.Content style={styles.susCard}>
           <Avatar.Icon size={50} icon="alert" />
-          
+
           <SafeAreaView style={styles.susText}>
             <Text style={{ fontSize: 20, fontWeight: "bold" }}>
               Suspicious Activity
             </Text>
             <Text>There is a suspicious activity detected in your house</Text>
           </SafeAreaView>
+        </Card.Content>
+      </Card>
+
+      <Card>
+        <Card.Content>
+          <Text style={{ fontSize: 20, fontWeight: "bold" }}>
+            Current profile - {currentProfile}
+          </Text>
         </Card.Content>
       </Card>
       <Card style={styles.container}>
@@ -51,7 +64,7 @@ function Home() {
 
             <TouchableOpacity
               style={styles.profileContainer}
-              onPress={(pro)=>router.push("EditProfiles")}
+              onPress={(pro) => router.push("EditProfiles")}
             >
               <Avatar.Icon size={54} icon="pencil" />
               <Text>Edit</Text>
@@ -68,7 +81,7 @@ export default Home;
 const styles = StyleSheet.create({
   container: {
     margin: 10,
-    height: 'auto', 
+    height: "auto",
   },
   susContainer: {
     margin: 10,
@@ -78,25 +91,21 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-
-    
-    
   },
   susText: {
     padding: 10,
     fontSize: 20,
     fontWeight: "bold",
-
   },
   profileRow: {
     flexDirection: "row",
     justifyContent: "space-around",
     marginVertical: 12,
-    flexWrap: "wrap", 
+    flexWrap: "wrap",
   },
   profileContainer: {
     alignItems: "center",
     marginHorizontal: 10,
-    paddingVertical: 10, 
+    paddingVertical: 10,
   },
 });
