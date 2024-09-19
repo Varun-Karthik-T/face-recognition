@@ -53,6 +53,10 @@ def set_active_profile_route(user_id):
     profile_id = request.json.get('profile_id')
     return set_active_profile(user_id, profile_id)
 
+@app.route('/profiles/<user_id>/active', methods=['GET'])
+def get_active_profile_route(user_id):
+    return get_active_profile(user_id)
+
 if __name__ == '__main__':
     app.config['DEBUG'] = False
     app.run(host='0.0.0.0', port=5000)
