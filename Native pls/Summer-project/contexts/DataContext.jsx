@@ -1,11 +1,12 @@
 import { createContext, useState } from "react";
-import { getPeople } from "@/api/api";
+import { getPeople, getProfiles } from "@/api/api";
 
 export const DataContext = createContext();
 
 export const DataProvider = ({ children }) => {
   const [loading, setLoading] = useState(false);
   const [userName, setUserName] = useState("Salai");
+  const [profiles, setProfiles] = useState([]);
   const [people, setPeople] = useState([]);
 
   const fetchPeople = () => {
@@ -16,9 +17,26 @@ export const DataProvider = ({ children }) => {
     });
   };
 
+  const fetchProfiles = () => {
+    getProfiles().then((response) => {
+      setProfiles(response.data.profiles);
+    });
+  };
+
   return (
     <DataContext.Provider
-      value={{ loading, setLoading, userName, setUserName, people, setPeople, fetchPeople}}
+      value={{
+        loading,
+        setLoading,
+        userName,
+        setUserName,
+        people,
+        setPeople,
+        profiles,
+        setProfiles,
+        fetchPeople,
+        fetchProfiles,
+      }}
     >
       {children}
     </DataContext.Provider>

@@ -7,20 +7,8 @@ import { router } from "expo-router";
 import { DataContext } from "@/contexts/DataContext";
 
 function Home() {
-  const { setLoading } = useContext(DataContext);
-  const [profiles, setProfiles] = useState([]);
+  const { profiles } = useContext(DataContext);
   const [currentProfile, setCurrentProfile] = useState("HI");
-  useEffect(() => {
-    setLoading(true);
-    fetchProfiles();
-    setLoading(false);
-  }, []);
-
-  const fetchProfiles = () => {
-    getProfiles().then((response) => {
-      setProfiles(response.data.profiles);
-    });
-  };
 
   return (
     <>
@@ -64,7 +52,7 @@ function Home() {
 
             <TouchableOpacity
               style={styles.profileContainer}
-              onPress={(pro) => router.push("EditProfiles")}
+              onPress={() => router.push("EditProfiles")}
             >
               <Avatar.Icon size={54} icon="pencil" />
               <Text>Edit</Text>

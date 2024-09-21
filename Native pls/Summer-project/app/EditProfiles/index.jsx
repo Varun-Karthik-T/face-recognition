@@ -27,104 +27,14 @@ function EditProfiles() {
   const [newProfileName, setNewProfileName] = useState("");
   const [expandedProfileId, setExpandedProfileId] = useState(null);
 
-  const { people, setLoading } = useContext(DataContext);
+  const { people, setLoading, fetchProfiles, profiles } = useContext(DataContext);
 
   useEffect(() => {
     getProfiles().then((response) => {
       const profiles = response.data.profiles;
       setProfilesToEdit(profiles);
     });
-  }, []);
-
-  const EditProfileModal = () => {
-    if (!selectedData) return null;
-
-    const handleSave = async () => {
-      setLoading(true);
-      const modifiedData = {
-        ...selectedData,
-        profile_name: newProfileName,
-      };
-      try {
-        console.log(modifiedData);
-        const response = await editProfile(selectedId, modifiedData);
-        console.log(response);
-      } catch (e) {
-        console.log("Error: " + e);
-      } finally {
-        setLoading(false);
-        setEditModalVisible(false);
-      }
-    };
-
-    const handleCheckboxChange = (personId) => {
-      setSelectedData((prevSelectedData) => {
-        const isSelected = prevSelectedData.allowed_people.some(
-          (person) => person.id === personId
-        );
-        if (isSelected) {
-          return {
-            ...prevSelectedData,
-            allowed_people: prevSelectedData.allowed_people.filter(
-              (person) => person.id !== personId
-            ),
-          };
-        } else {
-          return {
-            ...prevSelectedData,
-            allowed_people: [
-              ...prevSelectedData.allowed_people,
-              {
-                id: personId,
-                name: people.find((p) => p.id === personId).name,
-              },
-            ],
-          };
-        }
-      });
-    };
-
-    return (
-      <Portal>
-        <Modal
-          visible={editModalVisible}
-          onDismiss={() => setEditModalVisible(false)}
-        >
-          <View style={styles.modalContent}>
-            <Text style={styles.modalTitle}>Edit Profile</Text>
-            <TextInput
-              label="Profile Name"
-              value={newProfileName}
-              onChangeText={(newProfileName) => setNewProfileName(newProfileName)}
-              style={styles.input}
-            />
-            <FlatList
-              data={people}
-              keyExtractor={(item) => item.id.toString()}
-              renderItem={({ item }) => (
-                <View style={styles.checkboxContainer}>
-                  <Checkbox
-                    status={
-                      selectedData.allowed_people.some(
-                        (person) => person.id === item.id
-                      )
-                        ? "checked"
-                        : "unchecked"
-                    }
-                    onPress={() => handleCheckboxChange(item.id)}
-                  />
-                  <Text style={styles.checkboxLabel}>{item.name}</Text>
-                </View>
-              )}
-            />
-            <Button mode="contained" onPress={handleSave}>
-              Save
-            </Button>
-          </View>
-        </Modal>
-      </Portal>
-    );
-  };
+  }, [profiles]);
 
   const toggleExpandProfile = (id) => {
     setExpandedProfileId(expandedProfileId === id ? null : id);
@@ -136,6 +46,50 @@ function EditProfiles() {
     setSelectedData(profilesToEdit[index]);
     setSelectedId(profilesToEdit[index].id);
     setEditModalVisible(true);
+  };
+
+  const handleSave = async () => {
+    setLoading(true);
+    const modifiedData = {
+      ...selectedData,
+      profile_name: newProfileName,
+    };
+    try {
+      const response = await editProfile(selectedId, modifiedData);
+      fetchProfiles();
+    } catch (e) {
+      console.log("Error: " + e);
+    } finally {
+      setLoading(false);
+      setEditModalVisible(false);
+    }
+  };
+
+  const handleCheckboxChange = (personId) => {
+    setSelectedData((prevSelectedData) => {
+      const isSelected = prevSelectedData.allowed_people.some(
+        (person) => person.id === personId
+      );
+      if (isSelected) {
+        return {
+          ...prevSelectedData,
+          allowed_people: prevSelectedData.allowed_people.filter(
+            (person) => person.id !== personId
+          ),
+        };
+      } else {
+        return {
+          ...prevSelectedData,
+          allowed_people: [
+            ...prevSelectedData.allowed_people,
+            {
+              id: personId,
+              name: people.find((p) => p.id === personId).name,
+            },
+          ],
+        };
+      }
+    });
   };
 
   return (
@@ -190,7 +144,48 @@ function EditProfiles() {
             </Card>
           )}
         />
-        {editModalVisible && <EditProfileModal />}
+        {editModalVisible && (
+          <Portal>
+            <Modal
+              visible={editModalVisible}
+              onDismiss={() => setEditModalVisible(false)}
+            >
+              <View style={styles.modalContent}>
+                <Text style={styles.modalTitle}>Edit Profile</Text>
+                <TextInput
+                  label="Profile Name"
+                  value={newProfileName}
+                  onChangeText={(newProfileName) =>
+                    setNewProfileName(newProfileName)
+                  }
+                  style={styles.input}
+                />
+                <FlatList
+                  data={people}
+                  keyExtractor={(item) => item.id.toString()}
+                  renderItem={({ item }) => (
+                    <View style={styles.checkboxContainer}>
+                      <Checkbox
+                        status={
+                          selectedData.allowed_people.some(
+                            (person) => person.id === item.id
+                          )
+                            ? "checked"
+                            : "unchecked"
+                        }
+                        onPress={() => handleCheckboxChange(item.id)}
+                      />
+                      <Text style={styles.checkboxLabel}>{item.name}</Text>
+                    </View>
+                  )}
+                />
+                <Button mode="contained" onPress={handleSave}>
+                  Save
+                </Button>
+              </View>
+            </Modal>
+          </Portal>
+        )}
       </View>
     </>
   );

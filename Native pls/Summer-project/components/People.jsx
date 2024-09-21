@@ -1,4 +1,4 @@
-import React, { useState, useEffect,useContext } from "react";
+import React, { useState, useContext } from "react";
 import { View, StyleSheet } from "react-native";
 import {
   Card,
@@ -14,7 +14,7 @@ import { router } from "expo-router";
 import { DataContext } from "@/contexts/DataContext";
 
 export default function People() {
-  const {people, fetchPeople} = useContext(DataContext);
+  const { people } = useContext(DataContext);
   const [deleteMode, setDeleteMode] = useState(false);
 
   const handleDeletePerson = async (personId) => {
@@ -29,7 +29,6 @@ export default function People() {
   return (
     <>
       <View style={styles.container}>
-        <Button onPress={fetchPeople} icon="refresh"> Refresh </Button>
         <Card style={styles.peopleContainer}>
           {people.map((person, index) => (
             <View key={person.id}>
