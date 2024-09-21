@@ -9,33 +9,18 @@ import {
   Button,
   IconButton,
 } from "react-native-paper";
-import { getPeople, deletePerson } from "@/api/api";
+import { deletePerson } from "@/api/api";
 import { router } from "expo-router";
 import { DataContext } from "@/contexts/DataContext";
 
 export default function People() {
-  const {setLoading} = useContext(DataContext);
-  const [people, setPeople] = useState([]);
+  const {people, fetchPeople} = useContext(DataContext);
   const [deleteMode, setDeleteMode] = useState(false);
-
-  useEffect(() => {
-    setLoading(true);
-    fetchPeople();
-    
-  }, []);
-
-  const fetchPeople = () => {
-    getPeople().then((response) => {
-      setPeople(response.data);
-      setLoading(false);
-    });
-  };
 
   const handleDeletePerson = async (personId) => {
     console.log("Deleting person with ID:", personId);
     try {
       await deletePerson(personId);
-      fetchPeople();
     } catch (error) {
       console.error("Failed to delete person:", error);
     }

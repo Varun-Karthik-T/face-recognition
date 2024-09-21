@@ -2,7 +2,7 @@ import axios from "axios";
 
 let user = "66d36a9d42d9a5784e1a59fe";
 export const api = axios.create({
-  baseURL: "http://10.16.49.101:5000",
+  baseURL: "http://10.16.49.130:5000",
   headers: {
     "Content-Type": "application/json",
   },
@@ -33,6 +33,7 @@ export const addPerson = async (formData) => {
 }
 
 export const editProfile = async (profileId, formData) => {
+  console.log("route: " + `/profiles/${user}/${profileId}`)
     const response = await api.put(`/profiles/${user}/${profileId}`, formData, {
     });
     return response;
