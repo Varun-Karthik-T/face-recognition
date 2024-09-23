@@ -204,6 +204,7 @@ def get_active_profile(user_id):
             return jsonify({"error": "User not found"}), 404
 
         active_profile_id = user_record.get("active_profile_id")
+    
         if active_profile_id is None:
             return jsonify({"error": "Active profile not set"}), 404
 
