@@ -180,18 +180,27 @@ def match_face(username, embedding):
                     closest_match = name
                     break
         if closest_match is None:
-                return {'error': 'No match found', "success" : False}, 200
+                return {
+                    'user_id': str(user_record['_id']),
+                    'username': username,
+                    'closest_match': "Unknown person",
+                    'cosine_distance': cosine_distance,
+                    "success" : False
+                    }, 200
         return {
             'user_id': str(user_record['_id']),
             'username': username,
             'closest_match': closest_match,
-            'cosine_distance': cosine_distance
+            'cosine_distance': cosine_distance,
+            "success" : True
         }, 200    
     except Exception as e:
         print(f"Error in matching face: {str(e)}")
         return {'error': str(e), "success" : False}, 500
     
 def insert_history(user_id, name, image):
+    print("Inserting history")
+    print(user_id)
     try:
         collection = database["History"]
         today = datetime.utcnow().date()
@@ -236,12 +245,14 @@ def insert_history(user_id, name, image):
         return {'error': str(e), "success" : False}, 500
     
 def send_notification(user_id, content, type):
+    print("Sending notification")
     collection = database["Notifications"]
     if type == "face_recognition":
         notification_entry = {
             "timestamp": datetime.utcnow(),
             "name": content
         }
+        print(notification_entry)
     else:
         notification_entry = {
             "timestamp": datetime.utcnow(),
@@ -254,6 +265,7 @@ def send_notification(user_id, content, type):
             {"$push": {"suspicious_activity" if type == "suspicious_activity" else "face_recognition": notification_entry}},
             return_document=ReturnDocument.AFTER
         )
+        print(updated_notification)
 
         if updated_notification:
             return {'message': 'Notification sent successfully', "success" : True}, 200

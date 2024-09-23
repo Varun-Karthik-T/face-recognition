@@ -2,7 +2,7 @@ import axios from "axios";
 
 let user = "66d36a9d42d9a5784e1a59fe";
 export const api = axios.create({
-  baseURL: "http://10.16.49.130:5000",
+  baseURL: "http://10.11.158.15:5000",
   headers: {
     "Content-Type": "application/json",
   },
