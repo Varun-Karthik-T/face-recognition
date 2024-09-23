@@ -88,6 +88,9 @@ def update_profile(user_id, profile_id):
     profile_data = request.json
     print(" Profile ID: " + profile_id)
 
+    if 'allowed_people' in profile_data:
+        profile_data['allowed_people'] = [person['id'] for person in profile_data['allowed_people']]
+    
     profiles_document = profiles_collection.find_one({"user_id": ObjectId(user_id)})
     if not profiles_document:
         return jsonify({"error": "Profiles not found"}), 404

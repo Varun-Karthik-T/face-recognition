@@ -33,6 +33,7 @@ export const addPerson = async (formData) => {
 }
 
 export const editProfile = async (profileId, formData) => {
+  console.log("route: " + `/profiles/${user}/${profileId}`)
     const response = await api.put(`/profiles/${user}/${profileId}`, formData, {
     });
     return response;

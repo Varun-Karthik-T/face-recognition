@@ -8,22 +8,21 @@ import { DataContext } from "@/contexts/DataContext";
 
 function Home() {
   const { setLoading } = useContext(DataContext);
-  const [profiles, setProfiles] = useState([]);  // For listing profiles
-  const [currentProfile, setCurrentProfile] = useState({});  // Initialize as empty object to avoid undefined issues
-  const [modalVisible, setModalVisible] = useState(false);  // For modal visibility
-  const [selectedProfile, setSelectedProfile] = useState(null);  // For selected profile change
+  const [profiles, setProfiles] = useState([]); 
+  const [currentProfile, setCurrentProfile] = useState({}); 
+  const [modalVisible, setModalVisible] = useState(false);  
+  const [selectedProfile, setSelectedProfile] = useState(null);  
 
   useEffect(() => {
     setLoading(true);
     
-    // Fetch profiles and active profile
     const fetchData = async () => {
       try {
         const profileRes = await getProfiles();
-        setProfiles(profileRes.data.profiles); // Set profiles array from API response
+        setProfiles(profileRes.data.profiles); 
 
         const activeProfileRes = await getActiveprofile();
-        setCurrentProfile(activeProfileRes.data); // Set active profile data
+        setCurrentProfile(activeProfileRes.data); 
 
         setLoading(false);
       } catch (error) {
@@ -35,19 +34,19 @@ function Home() {
     fetchData();
   }, []);
 
-  // Handle profile change logic
+ 
   const handleProfileChange = (profileId) => {
     setSelectedProfile(profileId);
     setModalVisible(true);
   };
 
-  // Confirm profile change after modal confirmation
+
   const confirmProfileChange = async () => {
     try {
-      await switchProfile(selectedProfile);  // Switch the profile
-      const response = await getActiveprofile();  // Fetch the new active profile
-      setCurrentProfile(response.data);  // Update active profile state
-      setModalVisible(false);  // Hide modal
+      await switchProfile(selectedProfile); 
+      const response = await getActiveprofile(); 
+      setCurrentProfile(response.data);  
+      setModalVisible(false); 
     } catch (error) {
       console.error("Failed to switch profile", error);
     }
@@ -68,20 +67,18 @@ function Home() {
         </Card.Content>
       </Card>
 
-      {/* Current Active Profile */}
+      
       <Card>
         <Card.Content>
           <Text style={{ fontSize: 20, fontWeight: "bold" }}>
-            Current profile - {currentProfile?.active_profile_id ?? "No active profile"} {/* Safe access with fallback */}
+            Current profile - {currentProfile?.active_profile_id ?? "No active profile"}
           </Text>
         </Card.Content>
       </Card>
 
-      {/* Profile List */}
       <Card style={styles.container}>
         <Card.Content>
           <View style={styles.profileRow}>
-            {/* Display first 3 profiles */}
             {profiles.slice(0, 3).map((profile) => (
               <TouchableOpacity
                 key={profile.id}
@@ -94,7 +91,6 @@ function Home() {
             ))}
           </View>
 
-          {/* Display next 2 profiles and Edit button */}
           <View style={styles.profileRow}>
             {profiles.slice(3, 5).map((profile) => (
               <TouchableOpacity
@@ -118,7 +114,7 @@ function Home() {
         </Card.Content>
       </Card>
 
-      {/* Profile Switching Modal */}
+
       <Modal
         transparent={true}
         visible={modalVisible}

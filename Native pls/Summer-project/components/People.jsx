@@ -1,4 +1,4 @@
-import React, { useState, useEffect,useContext } from "react";
+import React, { useState, useContext } from "react";
 import { View, StyleSheet } from "react-native";
 import {
   Card,
@@ -9,33 +9,18 @@ import {
   Button,
   IconButton,
 } from "react-native-paper";
-import { getPeople, deletePerson } from "@/api/api";
+import { deletePerson } from "@/api/api";
 import { router } from "expo-router";
 import { DataContext } from "@/contexts/DataContext";
 
 export default function People() {
-  const {setLoading} = useContext(DataContext);
-  const [people, setPeople] = useState([]);
+  const { people } = useContext(DataContext);
   const [deleteMode, setDeleteMode] = useState(false);
-
-  useEffect(() => {
-    setLoading(true);
-    fetchPeople();
-    
-  }, []);
-
-  const fetchPeople = () => {
-    getPeople().then((response) => {
-      setPeople(response.data);
-      setLoading(false);
-    });
-  };
 
   const handleDeletePerson = async (personId) => {
     console.log("Deleting person with ID:", personId);
     try {
       await deletePerson(personId);
-      fetchPeople();
     } catch (error) {
       console.error("Failed to delete person:", error);
     }
@@ -44,7 +29,6 @@ export default function People() {
   return (
     <>
       <View style={styles.container}>
-        <Button onPress={fetchPeople} icon="refresh"> Refresh </Button>
         <Card style={styles.peopleContainer}>
           {people.map((person, index) => (
             <View key={person.id}>
