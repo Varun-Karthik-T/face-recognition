@@ -43,3 +43,13 @@ export const deletePerson = async (personId) => {
     const response = await api.delete(`/people/${user}/${personId}`);
     return response;
 }
+
+export const getActiveprofile = async()=>{
+  const response = await api.get(`/profiles/${user}/active`);
+  return response;
+}
+
+export const switchProfile = async(profileId) => {
+  const response = await api.put(`/profiles/${user}/active`, {profile_id: profileId});
+  return response;
+}
