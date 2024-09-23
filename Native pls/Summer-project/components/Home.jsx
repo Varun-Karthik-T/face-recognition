@@ -1,28 +1,33 @@
 import { View, StyleSheet, TouchableOpacity, Modal } from "react-native";
 import { Text, Avatar, Card, Button } from "react-native-paper";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { getProfiles, getActiveprofile, getPeople, switchProfile } from "@/api/api";
+import {
+  getProfiles,
+  getActiveprofile,
+  getPeople,
+  switchProfile,
+} from "@/api/api";
 import { useEffect, useState, useContext } from "react";
 import { router } from "expo-router";
 import { DataContext } from "@/contexts/DataContext";
 
 function Home() {
   const { setLoading } = useContext(DataContext);
-  const [profiles, setProfiles] = useState([]); 
-  const [currentProfile, setCurrentProfile] = useState({}); 
-  const [modalVisible, setModalVisible] = useState(false);  
-  const [selectedProfile, setSelectedProfile] = useState(null);  
+  const [profiles, setProfiles] = useState([]);
+  const [currentProfile, setCurrentProfile] = useState({});
+  const [modalVisible, setModalVisible] = useState(false);
+  const [selectedProfile, setSelectedProfile] = useState(null);
 
   useEffect(() => {
     setLoading(true);
-    
+
     const fetchData = async () => {
       try {
         const profileRes = await getProfiles();
-        setProfiles(profileRes.data.profiles); 
+        setProfiles(profileRes.data.profiles);
 
         const activeProfileRes = await getActiveprofile();
-        setCurrentProfile(activeProfileRes.data); 
+        setCurrentProfile(activeProfileRes.data);
 
         setLoading(false);
       } catch (error) {
@@ -34,19 +39,17 @@ function Home() {
     fetchData();
   }, []);
 
- 
   const handleProfileChange = (profileId) => {
     setSelectedProfile(profileId);
     setModalVisible(true);
   };
 
-
   const confirmProfileChange = async () => {
     try {
-      await switchProfile(selectedProfile); 
-      const response = await getActiveprofile(); 
-      setCurrentProfile(response.data);  
-      setModalVisible(false); 
+      await switchProfile(selectedProfile);
+      const response = await getActiveprofile();
+      setCurrentProfile(response.data);
+      setModalVisible(false);
     } catch (error) {
       console.error("Failed to switch profile", error);
     }
@@ -67,11 +70,11 @@ function Home() {
         </Card.Content>
       </Card>
 
-      
       <Card>
         <Card.Content>
           <Text style={{ fontSize: 20, fontWeight: "bold" }}>
-            Current profile - {currentProfile?.active_profile_id ?? "No active profile"}
+            Current profile -{" "}
+            {currentProfile?.active_profile_id ?? "No active profile"}
           </Text>
         </Card.Content>
       </Card>
@@ -85,7 +88,16 @@ function Home() {
                 style={styles.profileContainer}
                 onPress={() => handleProfileChange(profile.id)}
               >
-                <Avatar.Text size={54} label={profile.profile_name[0]} />
+                <Avatar.Text
+                  size={54}
+                  label={profile.profile_name[0]}
+                  style={{
+                    backgroundColor:
+                      profile.id === currentProfile.active_profile_id
+                        ? "green"
+                        : "",
+                  }}
+                />
                 <Text>{profile.profile_name}</Text>
               </TouchableOpacity>
             ))}
@@ -98,7 +110,16 @@ function Home() {
                 style={styles.profileContainer}
                 onPress={() => handleProfileChange(profile.id)}
               >
-                <Avatar.Text size={54} label={profile.profile_name[0]} />
+                <Avatar.Text
+                  size={54}
+                  label={profile.profile_name[0]}
+                  style={{
+                    backgroundColor:
+                      profile.id === currentProfile.active_profile_id
+                        ? "green"
+                        : "",
+                  }}
+                />
                 <Text>{profile.profile_name}</Text>
               </TouchableOpacity>
             ))}
@@ -113,7 +134,6 @@ function Home() {
           </View>
         </Card.Content>
       </Card>
-
 
       <Modal
         transparent={true}
