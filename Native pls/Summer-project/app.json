@@ -3,10 +3,14 @@
     "name": "Summer-project",
     "slug": "Summer-project",
     "version": "1.0.0",
+    "projectID":"123",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
     "scheme": "myapp",
     "userInterfaceStyle": "automatic",
+    "extra":{
+      "projectID":"123"
+    },
     "splash": {
       "image": "./assets/images/splash.png",
       "resizeMode": "contain",

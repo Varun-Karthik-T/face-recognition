@@ -10,6 +10,7 @@ import {
 import { useEffect, useState, useContext } from "react";
 import { router } from "expo-router";
 import { DataContext } from "@/contexts/DataContext";
+import Notify from "@/api/notify";
 
 function Home() {
   const { setLoading } = useContext(DataContext);
@@ -95,7 +96,7 @@ function Home() {
                     backgroundColor:
                       profile.id === currentProfile.active_profile_id
                         ? "green"
-                        : "",
+                        : "blue",
                   }}
                 />
                 <Text>{profile.profile_name}</Text>
@@ -117,7 +118,7 @@ function Home() {
                     backgroundColor:
                       profile.id === currentProfile.active_profile_id
                         ? "green"
-                        : "",
+                        : "blue",
                   }}
                 />
                 <Text>{profile.profile_name}</Text>
@@ -131,6 +132,7 @@ function Home() {
               <Avatar.Icon size={54} icon="pencil" />
               <Text>Edit</Text>
             </TouchableOpacity>
+            <Notify />
           </View>
         </Card.Content>
       </Card>
