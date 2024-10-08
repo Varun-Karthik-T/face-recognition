@@ -1,6 +1,6 @@
 import cv2
 from ultralytics import YOLO
-model = YOLO('../models/kaggle-55/best.pt')  #Model path
+model = YOLO('../models/best.pt') 
 cap = cv2.VideoCapture(0)
 
 while True:

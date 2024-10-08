@@ -130,6 +130,7 @@ def get_registered_faces(user_id):
     
 def delete_registered_face(user_id, person_id):
     users_collection = database["Users"]
+    profiles_collection = database["Profiles"]
     person_id = int(person_id)
     try:
         user_record = users_collection.find_one({"_id": ObjectId(user_id)})
@@ -144,10 +145,24 @@ def delete_registered_face(user_id, person_id):
             print("Person not found")
             return jsonify({"error": "Person not found"}), 404
 
+        # Update the registered_faces in the Users collection
         users_collection.update_one(
             {"_id": ObjectId(user_id)},
             {"$set": {"registered_faces": updated_faces}}
         )
+
+        # Fetch the user's profiles
+        profiles_document = profiles_collection.find_one({"user_id": ObjectId(user_id)})
+        if profiles_document:
+            profiles = profiles_document.get("profiles", [])
+            for profile in profiles:
+                profile["allowed_people"] = [pid for pid in profile["allowed_people"] if pid != person_id]
+
+            # Update the profiles in the Profiles collection
+            profiles_collection.update_one(
+                {"user_id": ObjectId(user_id)},
+                {"$set": {"profiles": profiles}}
+            )
 
         return jsonify({"message": "Person deleted successfully"}), 200
     except Exception as e:

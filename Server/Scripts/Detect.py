@@ -1,5 +1,6 @@
 import cv2
 import requests
+import pyttsx3
 
 DETECT_URL = 'http://localhost:5000/detect'
 
@@ -31,7 +32,13 @@ def capture_and_send_image():
                 'username': 'Salai' 
             }
             response = requests.post(DETECT_URL, files=files, data=data)
-            print("Response from server:", response.json())
+            response_data = response.json()
+            print("Response from server:", response_data)
+
+            closest_match = response_data.get('closest_match', 'Unknown person')
+            engine = pyttsx3.init()
+            engine.say(f"{closest_match} at the door!")
+            engine.runAndWait()
 
             break
 
