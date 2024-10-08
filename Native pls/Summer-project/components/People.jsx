@@ -14,13 +14,14 @@ import { router } from "expo-router";
 import { DataContext } from "@/contexts/DataContext";
 
 export default function People() {
-  const { people } = useContext(DataContext);
+  const { people, fetchPeople } = useContext(DataContext);
   const [deleteMode, setDeleteMode] = useState(false);
 
   const handleDeletePerson = async (personId) => {
     console.log("Deleting person with ID:", personId);
     try {
       await deletePerson(personId);
+      fetchPeople();
     } catch (error) {
       console.error("Failed to delete person:", error);
     }

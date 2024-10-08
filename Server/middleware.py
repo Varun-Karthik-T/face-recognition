@@ -29,6 +29,7 @@ def detect():
         return jsonify({'error': 'No image part'}), 400
     file = request.files['image']
     username = request.form.get('username', '')
+    print("Username: " + username)
 
     if not username:
         return jsonify({'error': 'Username is required'}), 400
@@ -39,24 +40,22 @@ def detect():
     print("Embedding extracted")
 
     match_result, match_status = match_face(username, embedding)
-    if match_status != 200:
+    if match_result.get('success') == True:
+        print("Match successful")
+    else:
         print("Match failed")
-        return jsonify(match_result), match_status
-    print("Match successful")
     user_id = match_result.get('user_id')
     closest_match = match_result.get('closest_match')
 
     file.seek(0)
     image_base64 = base64.b64encode(file.read()).decode('utf-8')
-    print("Image base64 encoded: " + image_base64)
 
     history_result, history_status = insert_history(user_id, closest_match, image_base64)
+    if history_status != 200:
+        return jsonify(history_result), history_status
     message, notif_status = send_notification(user_id, closest_match,"face_recognition")
     if notif_status != 200:
         return jsonify(message), notif_status
-    
-    if history_status != 200:
-        return jsonify(history_result), history_status
 
     return jsonify(match_result), match_status
 
@@ -131,6 +130,7 @@ def get_registered_faces(user_id):
     
 def delete_registered_face(user_id, person_id):
     users_collection = database["Users"]
+    profiles_collection = database["Profiles"]
     person_id = int(person_id)
     try:
         user_record = users_collection.find_one({"_id": ObjectId(user_id)})
@@ -145,10 +145,24 @@ def delete_registered_face(user_id, person_id):
             print("Person not found")
             return jsonify({"error": "Person not found"}), 404
 
+        # Update the registered_faces in the Users collection
         users_collection.update_one(
             {"_id": ObjectId(user_id)},
             {"$set": {"registered_faces": updated_faces}}
         )
+
+        # Fetch the user's profiles
+        profiles_document = profiles_collection.find_one({"user_id": ObjectId(user_id)})
+        if profiles_document:
+            profiles = profiles_document.get("profiles", [])
+            for profile in profiles:
+                profile["allowed_people"] = [pid for pid in profile["allowed_people"] if pid != person_id]
+
+            # Update the profiles in the Profiles collection
+            profiles_collection.update_one(
+                {"user_id": ObjectId(user_id)},
+                {"$set": {"profiles": profiles}}
+            )
 
         return jsonify({"message": "Person deleted successfully"}), 200
     except Exception as e:
