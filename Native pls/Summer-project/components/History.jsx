@@ -1,5 +1,5 @@
 import { useState, useEffect, useContext } from "react";
-import { View, StyleSheet, Image } from "react-native";
+import { View, StyleSheet, Image, ScrollView } from "react-native";
 import { Text, Card, Button } from "react-native-paper";
 import { getHistory } from "@/api/api";
 import { DataContext } from "@/contexts/DataContext";
@@ -20,7 +20,7 @@ function History() {
     setLoading(false);
   };
   return (
-    <View style={styles.container}>
+    <ScrollView style={styles.container}>
       <Button icon="refresh" onPress={fetchHisotry}>
         {" "}
         Refresh{" "}
@@ -50,7 +50,7 @@ function History() {
           </Card>
         </View>
       ))}
-    </View>
+    </ScrollView>
   );
 }
 

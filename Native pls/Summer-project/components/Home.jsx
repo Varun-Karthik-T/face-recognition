@@ -1,5 +1,5 @@
 import { View, StyleSheet, TouchableOpacity, Modal } from "react-native";
-import { Text, Avatar, Card, Button } from "react-native-paper";
+import { Text, Avatar, Card, Button, useTheme } from "react-native-paper";
 import { SafeAreaView } from "react-native-safe-area-context";
 import {
   getProfiles,
@@ -17,6 +17,8 @@ function Home() {
   const [currentProfile, setCurrentProfile] = useState({});
   const [modalVisible, setModalVisible] = useState(false);
   const [selectedProfile, setSelectedProfile] = useState(null);
+
+  const theme = useTheme();
 
   useEffect(() => {
     setLoading(true);
@@ -95,7 +97,7 @@ function Home() {
                     backgroundColor:
                       profile.id === currentProfile.active_profile_id
                         ? "green"
-                        : "",
+                        : theme.colors.primary,
                   }}
                 />
                 <Text>{profile.profile_name}</Text>
@@ -117,7 +119,7 @@ function Home() {
                     backgroundColor:
                       profile.id === currentProfile.active_profile_id
                         ? "green"
-                        : "",
+                        : theme.colors.primary,
                   }}
                 />
                 <Text>{profile.profile_name}</Text>
