@@ -4,7 +4,7 @@ import requests
 from datetime import datetime, timedelta
 from ultralytics import YOLO
 
-model = YOLO('Scripts/models/best.pt') 
+model = YOLO('C:/Users/Kowshik/Documents/GitHub/face-recognition/Server/Scripts/Models/best.pt') 
 
 cap = cv2.VideoCapture(0)
 
