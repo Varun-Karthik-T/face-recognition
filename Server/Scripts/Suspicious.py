@@ -17,6 +17,7 @@ cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 480)
 
 last_person_notification_time = datetime.min
 last_mask_notification_time = datetime.min
+last_suspicious_notification_time = datetime.min
 
 USER_ID = '66d36a9d42d9a5784e1a59fe'
 NOTIFICATION_URL = f'http://localhost:5000/notifications/{USER_ID}/suspicious'
@@ -31,6 +32,7 @@ while True:
 
     person_count = 0
     mask_found = False
+    suspicious_found = False
     class_counts = {}
     for result in results:
         for box in result.boxes:
@@ -43,6 +45,8 @@ while True:
                 person_count += 1
             if class_name == "mask" and confidence > 0.5:
                 mask_found = True
+            if class_name == "suspicious" and confidence > 0.85:
+                suspicious_found = True
             if class_name in class_counts:
                 class_counts[class_name] += 1
             else:
@@ -55,11 +59,8 @@ while True:
 
     cv2.imshow('Webcam', annotated_frame)
 
- 
     if person_count > 3 and datetime.now() - last_person_notification_time > timedelta(minutes=5):
-
         last_person_notification_time = datetime.now()
-
         _, buffer = cv2.imencode('.jpg', frame)
         files = {
             'image': ('image.jpg', buffer.tobytes(), 'image/jpeg')
@@ -67,15 +68,11 @@ while True:
         data = {
             'classification': 'Many people found in front of your house!'
         }
-
         response = requests.post(NOTIFICATION_URL, files=files, data=data)
         print("Notification response:", response.json())
 
- 
     if mask_found and datetime.now() - last_mask_notification_time > timedelta(minutes=5):
-   
         last_mask_notification_time = datetime.now()
-
         _, buffer = cv2.imencode('.jpg', frame)
         files = {
             'image': ('image.jpg', buffer.tobytes(), 'image/jpeg')
@@ -83,7 +80,18 @@ while True:
         data = {
             'classification': 'A masked person found'
         }
+        response = requests.post(NOTIFICATION_URL, files=files, data=data)
+        print("Notification response:", response.json())
 
+    if suspicious_found and datetime.now() - last_suspicious_notification_time > timedelta(minutes=5):
+        last_suspicious_notification_time = datetime.now()
+        _, buffer = cv2.imencode('.jpg', frame)
+        files = {
+            'image': ('image.jpg', buffer.tobytes(), 'image/jpeg')
+        }
+        data = {
+            'classification': 'Something blocked the camera!'
+        }
         response = requests.post(NOTIFICATION_URL, files=files, data=data)
         print("Notification response:", response.json())
 
