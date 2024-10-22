@@ -203,6 +203,7 @@ def insert_history(user_id, name, image):
     print(user_id)
     try:
         collection = database["History"]
+        print(collection)
         today = datetime.utcnow().date()
 
         user_history = collection.find_one({"user_id": ObjectId(user_id)})
