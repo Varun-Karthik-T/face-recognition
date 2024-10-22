@@ -6,7 +6,7 @@ import {
   getActiveprofile,
   getPeople,
   switchProfile,
-  getHistory
+  getNotifications,
 } from "@/api/api";
 import { useEffect, useState, useContext } from "react";
 import { router } from "expo-router";
@@ -20,7 +20,7 @@ function Home() {
   const [currentProfile, setCurrentProfile] = useState({});
   const [modalVisible, setModalVisible] = useState(false);
   const [selectedProfile, setSelectedProfile] = useState(null);
-  const  [suspicious, setSuspicious] = useState([]);
+  const  [notifications, setNotifications] = useState([]);
 
   const theme = useTheme();
 
@@ -35,10 +35,9 @@ function Home() {
         const activeProfileRes = await getActiveprofile();
         setCurrentProfile(activeProfileRes.data);
 
-        const suspiciousRes = await getHistory();
-        setSuspicious(suspiciousRes.data);
-        console.log(suspiciousRes.data);
-
+        const notifyRes = await getNotifications();
+        setNotifications(notifyRes.data.suspicious_activity);
+        console.log(notifyRes.data.suspicious_activity);
         setLoading(false);
       } catch (error) {
         console.error("Error fetching profiles or active profile", error);
@@ -72,9 +71,19 @@ function Home() {
         <Card.Content style={styles.susCard}>
           <Avatar.Icon size={50} icon="alert" />
           <SafeAreaView style={styles.susText}>
-            <Text style={{ fontSize: 20, fontWeight: "bold" }}>
-              Suspicious Activity
+            <Text style={{ fontSize: 15, fontWeight: "bold" }}>
+             
+              {notifications.length > 0 ? (
+              notifications.slice(0,2).map((activity, index) => (
+                <Text key={index}>
+                  {activity.classification} at {new Date(activity.timestamp).toLocaleString()}
+                </Text>
+              ))
+            ) : (
+              <Text>No recent suspicious activity detected</Text>
+            )}
             </Text>
+            <Text>{}</Text>
           </SafeAreaView>
         </Card.Content>
       </Card>
