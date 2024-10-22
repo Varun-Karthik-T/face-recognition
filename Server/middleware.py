@@ -246,3 +246,87 @@ def send_suspicious_activity_notification(user_id, classification, image):
     except Exception as e:
         print(f"Error in send_suspicious_activity_notification: {str(e)}")
         return jsonify({"error": str(e)}), 500
+    
+def add_permission(user_id, entry):
+    if not user_id or not entry:
+        return jsonify({'error': 'user_id and entry are required', 'success': False}), 400
+
+    permissions_collection = database["Permission"]
+
+    try:
+        permission_document = permissions_collection.find_one({"user_id": ObjectId(user_id)})
+        print(permission_document)
+        if permission_document:
+            result = permissions_collection.update_one(
+                {"user_id": ObjectId(user_id)},
+                {"$push": {"entries": entry}}
+            )
+            print("Update result:", result.raw_result) 
+            if result.modified_count > 0:
+                return jsonify({'message': 'Entry added to existing permission document', 'success': True}), 200
+            else:
+                return jsonify({'error': 'Failed to add entry', 'success': False}), 500
+        else:
+            new_document = {
+                "user_id": user_id,
+                "entries": [entry]
+            }
+            permissions_collection.insert_one(new_document)
+            return jsonify({'message': 'Permission document created and entry added', 'success': True}), 200
+
+    except Exception as e:
+        print(f"Error in add_permission: {str(e)}")
+        return jsonify({'error': str(e), 'success': False}), 500
+    
+def get_permissions(user_id):
+    if not user_id:
+        return jsonify({'error': 'user_id is required', 'success': False}), 400
+
+    permissions_collection = database["Permission"]
+
+    try:
+        permission_document = permissions_collection.find_one({"user_id": ObjectId(user_id)})
+        if permission_document:
+            return jsonify({'entries': permission_document.get('entries', []), 'success': True}), 200
+        else:
+            return jsonify({'error': 'No permission document found for the user', 'success': False}), 404
+
+    except Exception as e:
+        print(f"Error in get_permissions: {str(e)}")
+        return jsonify({'error': str(e), 'success': False}), 500
+    
+def update_permission(user_id, index, allow):
+    if not user_id or index is None or allow is None:
+        return jsonify({'error': 'user_id, index, and allow are required', 'success': False}), 400
+
+    permissions_collection = database["Permission"]
+    try:
+        permission_document = permissions_collection.find_one({"user_id": ObjectId(user_id)})
+        if not permission_document:
+            return jsonify({'error': 'No permission document found for the user', 'success': False}), 404
+
+        entries = permission_document.get('entries', [])
+        if index < 0 or index >= len(entries):
+            return jsonify({'error': 'Index out of range', 'success': False}), 400
+
+        entry = entries.pop(index)
+        name = entry['name']
+        image = entry.get('image', None)
+        if allow:
+            history_name = name
+        else:
+            history_name = f"{name} - declined"
+
+        history_response, history_status = insert_history(user_id, history_name, image)
+        if history_status != 200:
+            return jsonify(history_response), history_status
+
+        permissions_collection.update_one(
+            {"user_id": ObjectId(user_id)},
+            {"$set": {"entries": entries}}
+        )
+
+        return jsonify({'message': 'Permission updated successfully', 'success': True}), 200
+    except Exception as e:
+        print(f"Error in update_permission: {str(e)}")
+        return jsonify({'error': str(e), 'success': False}), 500

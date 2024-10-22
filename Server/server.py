@@ -66,11 +66,31 @@ def send_suspicious_activity_notification_route(user_id):
         return jsonify({"error": "Classification is required"}), 400
     if not image:
         return jsonify({"error": "Image is required"}), 400
-    
-    # Convert image to base64
     image_base64 = base64.b64encode(image.read()).decode('utf-8')
     
     return send_suspicious_activity_notification(user_id, classification, image_base64)
+
+@app.route('/permissions/<user_id>', methods=['POST'])
+def add_permission_route(user_id):
+    name = request.form.get('name')
+    reason = request.form.get('reason')
+    image = request.files.get('image')
+
+    if not name or not reason or not image:
+        return jsonify({'error': 'Name, reason, and image are required'}), 400
+
+    image_base64 = base64.b64encode(image.read()).decode('utf-8')
+    entry = {"name": name, "reason": reason, "allow": False, "image": image_base64}
+    return add_permission(user_id, entry)
+
+@app.route('/permissions/<user_id>', methods=['GET'])
+def get_permissions_route(user_id):
+    return get_permissions(user_id)
+
+@app.route('/permissions/<user_id>/<int:index>', methods=['PUT'])
+def update_permission_route(user_id, index):
+    allow = request.json.get('allow')
+    return update_permission(user_id, index, allow)
 
 if __name__ == '__main__':
     app.config['DEBUG'] = False

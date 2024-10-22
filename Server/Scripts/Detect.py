@@ -38,6 +38,11 @@ def capture_and_send_image():
             closest_match = response_data.get('closest_match', 'Unknown person')
             engine = pyttsx3.init()
             engine.say(f"{closest_match} at the door!")
+            engine.say(f"{closest_match} at the door!")
+            if closest_match == 'Unknown person':
+                engine.say("You are new here, please state your reasons for visiting.")
+            else:
+                engine.say("Door opened!")
             engine.runAndWait()
 
             break

@@ -45,11 +45,11 @@ while True:
                 continue
             if class_name == "person":
                 person_count += 1
-            if class_name == "mask" and confidence > 0.5:
+            if class_name == "mask" and confidence > 0.3:
                 mask_found = True
             if class_name == "suspicious" and confidence > 0.85:
                 suspicious_found = True
-            if class_name == "summa" and confidence > 0.1:
+            if (class_name == "knife" or class_name == "weapon")  and confidence > 0.1:
                 summa_found = True
             if class_name in class_counts:
                 class_counts[class_name] += 1
@@ -63,7 +63,7 @@ while True:
 
     cv2.imshow('Webcam', annotated_frame)
 
-    if person_count > 3 and datetime.now() - last_person_notification_time > timedelta(minutes=5):
+    if person_count > 3 and datetime.now() - last_person_notification_time > timedelta(minutes=1):
         last_person_notification_time = datetime.now()
         _, buffer = cv2.imencode('.jpg', frame)
         files = {
@@ -75,7 +75,7 @@ while True:
         response = requests.post(NOTIFICATION_URL, files=files, data=data)
         print("Notification response:", response.json())
 
-    if mask_found and datetime.now() - last_mask_notification_time > timedelta(minutes=5):
+    if mask_found and datetime.now() - last_mask_notification_time > timedelta(minutes=1):
         last_mask_notification_time = datetime.now()
         _, buffer = cv2.imencode('.jpg', frame)
         files = {
@@ -106,7 +106,7 @@ while True:
             'image': ('image.jpg', buffer.tobytes(), 'image/jpeg')
         }
         data = {
-            'classification': 'Summa detected!'
+            'classification': 'Weapon detected!'
         }
         response = requests.post(NOTIFICATION_URL, files=files, data=data)
         print("Notification response:", response.json())
