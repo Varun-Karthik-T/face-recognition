@@ -27,7 +27,8 @@ function EditProfiles() {
   const [newProfileName, setNewProfileName] = useState("");
   const [expandedProfileId, setExpandedProfileId] = useState(null);
 
-  const { people, setLoading, fetchProfiles, profiles } = useContext(DataContext);
+  const { people, setLoading, fetchProfiles, profiles } =
+    useContext(DataContext);
 
   useEffect(() => {
     getProfiles().then((response) => {
@@ -104,18 +105,18 @@ function EditProfiles() {
               <View style={styles.profileRow}>
                 <Text style={styles.profileName}>{item.profile_name}</Text>
                 <TouchableOpacity onPress={() => handleEdit(index)}>
-                  <Avatar.Icon size={35} icon="pencil" />
+                  <Avatar.Icon size={40} icon="pencil" />
                 </TouchableOpacity>
-                <Button onPress={() => toggleExpandProfile(item.id)}>
+                <TouchableOpacity onPress={() => toggleExpandProfile(item.id)}>
                   <Avatar.Icon
-                    size={35}
+                    size={40}
                     icon={
                       expandedProfileId === item.id
                         ? "chevron-up"
                         : "chevron-down"
                     }
                   />
-                </Button>
+                </TouchableOpacity>
               </View>
 
               {expandedProfileId === item.id && (
@@ -204,7 +205,7 @@ const styles = StyleSheet.create({
     marginBottom: 16,
   },
   card: {
-    marginBottom: 12,
+    margin: 8,
   },
   profileRow: {
     flexDirection: "row",
@@ -232,6 +233,7 @@ const styles = StyleSheet.create({
     color: "gray",
   },
   modalContainer: {
+    display: "flex",
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
@@ -241,6 +243,7 @@ const styles = StyleSheet.create({
     padding: 16,
     backgroundColor: "white",
     borderRadius: 10,
+    alignSelf: "center",
   },
   modalTitle: {
     fontSize: 20,
