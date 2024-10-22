@@ -5,7 +5,7 @@
     "version": "1.0.0",
     "projectID":"123",
     "orientation": "portrait",
-    "icon": "./assets/images/icon.png",
+    "icon": "./assets/boy.png",
     "scheme": "myapp",
     "userInterfaceStyle": "automatic",
     "extra":{

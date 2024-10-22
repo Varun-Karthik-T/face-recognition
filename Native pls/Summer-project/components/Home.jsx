@@ -6,11 +6,13 @@ import {
   getActiveprofile,
   getPeople,
   switchProfile,
+  getHistory
 } from "@/api/api";
 import { useEffect, useState, useContext } from "react";
 import { router } from "expo-router";
 import { DataContext } from "@/contexts/DataContext";
 import Notify from "@/api/notify";
+
 
 function Home() {
   const { setLoading } = useContext(DataContext);
@@ -18,6 +20,7 @@ function Home() {
   const [currentProfile, setCurrentProfile] = useState({});
   const [modalVisible, setModalVisible] = useState(false);
   const [selectedProfile, setSelectedProfile] = useState(null);
+  const  [suspicious, setSuspicious] = useState([]);
 
   const theme = useTheme();
 
@@ -31,6 +34,10 @@ function Home() {
 
         const activeProfileRes = await getActiveprofile();
         setCurrentProfile(activeProfileRes.data);
+
+        const suspiciousRes = await getHistory();
+        setSuspicious(suspiciousRes.data);
+        console.log(suspiciousRes.data);
 
         setLoading(false);
       } catch (error) {
@@ -68,7 +75,6 @@ function Home() {
             <Text style={{ fontSize: 20, fontWeight: "bold" }}>
               Suspicious Activity
             </Text>
-            <Text>There is suspicious activity detected in your house</Text>
           </SafeAreaView>
         </Card.Content>
       </Card>
@@ -134,7 +140,7 @@ function Home() {
               <Avatar.Icon size={54} icon="pencil" />
               <Text>Edit</Text>
             </TouchableOpacity>
-            <Notify />
+           
           </View>
         </Card.Content>
       </Card>

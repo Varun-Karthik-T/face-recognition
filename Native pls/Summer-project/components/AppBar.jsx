@@ -13,7 +13,7 @@ function AppBar() {
           }}
         />
       )}
-      <Appbar.Content title="Summer Project" />
+      <Appbar.Content title="VigilEye" />
     </Appbar.Header>
   );
 }
