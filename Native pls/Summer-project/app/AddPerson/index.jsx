@@ -10,7 +10,7 @@ function AddPerson() {
   const [relation, setRelation] = useState("");
   const [images, setImages] = useState([]);
 
-  const { setLoading, userName } = useContext(DataContext);
+  const { setLoading, userName,fetchPeople } = useContext(DataContext);
 
   const pickImages = async () => {
     try {
@@ -55,6 +55,7 @@ function AddPerson() {
       console.log(response.data);
       if (response.data.success) {
         Alert.alert("Success", response.data.message);
+        fetchPeople();
       } else {
         const errorMessages = response.data.error.join("\n");
         Alert.alert("Error", errorMessages);

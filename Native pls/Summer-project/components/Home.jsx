@@ -1,5 +1,13 @@
-import { View, StyleSheet, TouchableOpacity, Modal } from "react-native";
-import { Text, Avatar, Card, Button, useTheme } from "react-native-paper";
+import { View, StyleSheet, TouchableOpacity, Modal, Image } from "react-native";
+import {
+  Text,
+  Avatar,
+  Card,
+  Button,
+  useTheme,
+  ActivityIndicator,
+  Divider,
+} from "react-native-paper";
 import { SafeAreaView } from "react-native-safe-area-context";
 import {
   getProfiles,
@@ -10,17 +18,16 @@ import {
 } from "@/api/api";
 import { useEffect, useState, useContext } from "react";
 import { router } from "expo-router";
-import { DataContext } from "@/contexts/DataContext";
 import Notify from "@/api/notify";
-
+import Loader from "./Loader";
 
 function Home() {
-  const { setLoading } = useContext(DataContext);
   const [profiles, setProfiles] = useState([]);
   const [currentProfile, setCurrentProfile] = useState({});
   const [modalVisible, setModalVisible] = useState(false);
   const [selectedProfile, setSelectedProfile] = useState(null);
-  const  [notifications, setNotifications] = useState([]);
+  const [notifications, setNotifications] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   const theme = useTheme();
 
@@ -37,10 +44,11 @@ function Home() {
 
         const notifyRes = await getNotifications();
         setNotifications(notifyRes.data.suspicious_activity);
-        console.log(notifyRes.data.suspicious_activity);
         setLoading(false);
       } catch (error) {
         console.error("Error fetching profiles or active profile", error);
+        setLoading(false);
+      } finally {
         setLoading(false);
       }
     };
@@ -64,6 +72,15 @@ function Home() {
     }
   };
 
+  if (loading) {
+    return (
+      <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+        <ActivityIndicator animating={loading} size="large" />
+        <Text>Fetching Profiles</Text>
+      </View>
+    );
+  }
+
   return (
     <>
       {/* Suspicious Activity Card */}
@@ -71,20 +88,47 @@ function Home() {
         <Card.Content style={styles.susCard}>
           <Avatar.Icon size={50} icon="alert" />
           <SafeAreaView style={styles.susText}>
-            <Text style={{ fontSize: 15, fontWeight: "bold" }}>
-             
-              {notifications.length > 0 ? (
-              notifications.slice(0,2).map((activity, index) => (
-                <Text key={index}>
-                  {activity.classification} at {new Date(activity.timestamp).toLocaleString()}
-                </Text>
+            {notifications.length > 0 ? (
+              notifications.slice(0, 2).map((activity, index) => (
+                <View key={index}>
+                  <Text style={{ fontSize: 15, fontWeight: "bold" }}>
+                    {activity.classification} at {"\n"}
+                    {new Date(activity.timestamp).toLocaleString()}
+                    {"\n"}
+                  </Text>
+                  {index === 0 && <Divider />}
+                </View>
               ))
             ) : (
               <Text>No recent suspicious activity detected</Text>
             )}
-            </Text>
-            <Text>{}</Text>
           </SafeAreaView>
+        </Card.Content>
+      </Card>
+
+      <Card style={{ marginVertical: 10 }}>
+        <Card.Content>
+          <Text style={{ fontSize: 20, fontWeight: "bold" }}>Permissions</Text>
+          <View style={{ flexDirection: "row", alignItems: "center" }}>
+            <Image
+              source={{ uri: "https://picsum.photos/200/300/?blur=2" }}
+              style={{ width: 100, height: 100, marginRight: 10 }}
+            />
+            <View style={{ flexDirection: "column", gap: 20 }}>
+              <Text>Person A is at the door</Text>
+              <View
+                style={{
+                  display: "flex",
+                  flexDirection: "row",
+                  justifyContent: "space-evenly",
+                  gap: 20,
+                }}
+              >
+                <Button mode="contained">Open door</Button>
+                <Button mode="outlined">Deny</Button>
+              </View>
+            </View>
+          </View>
         </Card.Content>
       </Card>
 
@@ -149,7 +193,6 @@ function Home() {
               <Avatar.Icon size={54} icon="pencil" />
               <Text>Edit</Text>
             </TouchableOpacity>
-           
           </View>
         </Card.Content>
       </Card>
@@ -179,19 +222,17 @@ export default Home;
 const styles = StyleSheet.create({
   container: {
     margin: 10,
-    height: "auto",
   },
   susContainer: {
-    margin: 10,
+    height: "auto",
   },
   susCard: {
     display: "flex",
     flexDirection: "row",
-    justifyContent: "space-between",
+    justifyContent: "space-evenly",
     alignItems: "center",
   },
   susText: {
-    padding: 10,
     fontSize: 20,
     fontWeight: "bold",
   },

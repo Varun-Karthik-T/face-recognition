@@ -8,6 +8,7 @@ export const DataProvider = ({ children }) => {
   const [userName, setUserName] = useState("Salai");
   const [profiles, setProfiles] = useState([]);
   const [people, setPeople] = useState([]);
+  const [history, setHistory] = useState([]);
 
   const fetchPeople = () => {
     setLoading(true);
@@ -22,6 +23,14 @@ export const DataProvider = ({ children }) => {
       setProfiles(response.data.profiles);
     });
   };
+
+  const fetchHistory = () => {
+    getHistory().then((response) => {
+      setHistory(response.data);
+    });
+  }
+
+
 
   return (
     <DataContext.Provider
