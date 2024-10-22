@@ -1,56 +1,52 @@
 import { useState, useEffect, useContext } from "react";
 import { View, StyleSheet, Image, ScrollView } from "react-native";
-import { Text, Card, Button,ActivityIndicator } from "react-native-paper";
+import { Text, Card, Button, ActivityIndicator } from "react-native-paper";
 import { getHistory } from "@/api/api";
-import { router } from "expo-router";
+import { DataContext } from "@/contexts/DataContext";
 import Loader from "@/components/Loader";
 
-function History() {
+function FullHistory() {
   const [history, setHistory] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    
     fetchHisotry();
   }, []);
 
   const fetchHisotry = () => {
-    setLoading(true);
-    getHistory().then((response) => {
-      setHistory(response.data);
-    }).catch((error) => {
-      console.error("Error fetching history", error);
-    }).finally(() => {
-      setLoading(false);
-    });
+    setIsLoading(true);
+    getHistory()
+      .then((response) => {
+        setHistory(response.data);
+      })
+      .catch((error) => {
+        console.error("Error fetching history", error);
+      })
+      .finally(() => {
+        setIsLoading(false);
+      });
   };
 
-
-
-  if (loading) {
+  if (isLoading) {
     return (
       <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-        <ActivityIndicator animating={loading} size="large" />
+        <ActivityIndicator animating={isLoading} size="large" />
         <Text>Fetching History</Text>
       </View>
     );
   }
-
   return (
     <ScrollView style={styles.container}>
-      <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
-        <Button icon="refresh" onPress={fetchHisotry}>
-          {" "}
-          Refresh{" "}
-        </Button>
-        <Button icon="history" onPress={() => router.push("FullHistory")}>
-          View Full History
-        </Button>
+      <Button icon="refresh" onPress={fetchHisotry}>
+        {" "}
+        Refresh{" "}
+      </Button>
+      <View>
+        <Text style={styles.HeadingText}>Full History</Text>
       </View>
 
       {history
         .sort((a, b) => new Date(b.date) - new Date(a.date))
-        .slice(0, 2)
         .map((item) => (
           <View key={item.date} style={styles.historyItem}>
             <Text style={styles.dateText}>
@@ -92,6 +88,11 @@ const styles = StyleSheet.create({
   historyItem: {
     marginBottom: 20,
   },
+  HeadingText: {
+    fontSize: 30,
+    fontWeight: "bold",
+    marginBottom: 8,
+  },
   dateText: {
     fontSize: 18,
     fontWeight: "bold",
@@ -125,4 +126,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default History;
+export default FullHistory;
