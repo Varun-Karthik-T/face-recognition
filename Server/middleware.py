@@ -229,3 +229,20 @@ def get_active_profile(user_id):
     except Exception as e:
         print(f"Error in get_active_profile: {str(e)}")
         return jsonify({"error": str(e)}), 500
+    
+def send_suspicious_activity_notification(user_id, classification, image):
+    try:
+        response, status = send_notification(user_id, classification, "suspicious_activity")
+        
+        if status != 200:
+            return jsonify(response), status
+
+        history_response, history_status = insert_history(user_id, classification, image)
+        
+        if history_status != 200:
+            return jsonify(history_response), history_status
+
+        return jsonify({"message": "Notification and history updated successfully"}), 200
+    except Exception as e:
+        print(f"Error in send_suspicious_activity_notification: {str(e)}")
+        return jsonify({"error": str(e)}), 500

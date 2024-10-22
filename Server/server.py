@@ -57,6 +57,21 @@ def set_active_profile_route(user_id):
 def get_active_profile_route(user_id):
     return get_active_profile(user_id)
 
+@app.route('/notifications/<user_id>/suspicious', methods=['POST'])
+def send_suspicious_activity_notification_route(user_id):
+    classification = request.form.get('classification')
+    image = request.files.get('image')
+    
+    if not classification:
+        return jsonify({"error": "Classification is required"}), 400
+    if not image:
+        return jsonify({"error": "Image is required"}), 400
+    
+    # Convert image to base64
+    image_base64 = base64.b64encode(image.read()).decode('utf-8')
+    
+    return send_suspicious_activity_notification(user_id, classification, image_base64)
+
 if __name__ == '__main__':
     app.config['DEBUG'] = False
     app.run(host='0.0.0.0', port=5000)
