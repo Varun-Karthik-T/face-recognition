@@ -75,6 +75,10 @@ def add_permission_route(user_id):
     name = request.form.get('name')
     reason = request.form.get('reason')
     image = request.files.get('image')
+    
+    print("name: ", name)
+    print("reason: ", reason)
+    
 
     if not name or not reason or not image:
         return jsonify({'error': 'Name, reason, and image are required'}), 400
