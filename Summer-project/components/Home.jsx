@@ -119,7 +119,7 @@ function Home() {
           <Text style={{ fontSize: 20, fontWeight: "bold" }}>Permissions</Text>
           <View style={{ flexDirection: "row", alignItems: "center" }}>
             <Image
-              source={{ uri: "https://picsum.photos/200/300/?blur=2" }}
+              source={{ uri:`data:image/jpeg;base64,${permissions.Image}`  }}
               style={{ width: 100, height: 100, marginRight: 10 }}
             />
             <View style={{ flexDirection: "column", gap: 20 }}>

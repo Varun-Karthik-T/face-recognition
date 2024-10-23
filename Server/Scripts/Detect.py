@@ -88,18 +88,16 @@ def capture_and_send_image():
             closest_match = response_data.get('closest_match', 'Unknown person')
             engine = pyttsx3.init()
             engine.say(f"{closest_match} at the door!")
-            engine.say(f"{closest_match} at the door!")
-            engine.runAndWait()
 
             is_allowed = any(person['name'] == closest_match for person in allowed_people)
 
             if closest_match == 'Unknown person' or not is_allowed:
                 if closest_match == 'Unknown person':
                     engine.say("You are new here, please state your reasons for visiting.")
-                    engine.runAndWait()
                 else:
                     engine.say("Please state your reasons for visiting.")
-                    engine.runAndWait()
+
+                engine.runAndWait()
 
                 recognizer = sr.Recognizer()
                 with sr.Microphone() as source:
