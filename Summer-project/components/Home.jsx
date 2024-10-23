@@ -1,4 +1,4 @@
-import { View, StyleSheet, TouchableOpacity, Modal, Image } from "react-native";
+import { View, StyleSheet, TouchableOpacity, Modal, Image,ScrollView } from "react-native";
 import {
   Text,
   Avatar,
@@ -84,6 +84,7 @@ function Home() {
   return (
     <>
       {/* Suspicious Activity Card */}
+      <ScrollView>
       <Card style={styles.susContainer}>
         <Card.Content style={styles.susCard}>
           <Avatar.Icon size={50} icon="alert" />
@@ -213,6 +214,7 @@ function Home() {
           </View>
         </View>
       </Modal>
+      </ScrollView>
     </>
   );
 }
