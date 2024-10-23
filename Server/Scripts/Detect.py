@@ -63,6 +63,7 @@ def capture_and_send_image():
             break
 
     print(f"Allowed People in Active Profile: {allowed_people}")
+    child_mode = active_profile_id == 2
 
     while True:
         ret, frame = cap.read()
@@ -93,6 +94,11 @@ def capture_and_send_image():
 
             is_allowed = any(person['name'] == closest_match for person in allowed_people)
 
+            if (child_mode and not is_allowed):
+                engine.say("Nobody at home, please come back later.")
+                engine.runAndWait()
+                continue
+
             if closest_match == 'Unknown person' or not is_allowed:
                 if closest_match == 'Unknown person':
                     engine.say("You are new here, please state your reasons for visiting.")
@@ -103,25 +109,28 @@ def capture_and_send_image():
 
                 recognizer = sr.Recognizer()
                 with sr.Microphone() as source:
-                    print("Listening for reason...")
-                    audio = recognizer.listen(source)
-                    try:
-                        reason = recognizer.recognize_google(audio)
-                        print(f"Reason: {reason}")
+                    while True:
+                        print("Listening for reason...")
+                        audio = recognizer.listen(source)
+                        try:
+                            reason = recognizer.recognize_google(audio)
+                            print(f"Reason: {reason}")
 
-                        permission_data = {
-                            'name': closest_match if closest_match != 'Unknown person' else 'Unknown',
-                            'reason': reason
-                        }
-                        permission_files = {
-                            'image': ('image.jpg', buffer.tobytes(), 'image/jpeg')
-                        }
-                        permission_response = requests.post(ADD_PERMISSION_URL, files=permission_files, data=permission_data)
-                        print("Permission response:", permission_response.json())
-                    except sr.UnknownValueError:
-                        print("Could not understand the audio")
-                    except sr.RequestError as e:
-                        print(f"Could not request results; {e}")
+                            permission_data = {
+                                'name': closest_match if closest_match != 'Unknown person' else 'Unknown',
+                                'reason': reason
+                            }
+                            permission_files = {
+                                'image': ('image.jpg', buffer.tobytes(), 'image/jpeg')
+                            }
+                            permission_response = requests.post(ADD_PERMISSION_URL, files=permission_files, data=permission_data)
+                            print("Permission response:", permission_response.json())
+                            break
+                        except sr.UnknownValueError:
+                            engine.say("I could not understand you, please try again.")
+                            print("Could not understand the audio")
+                        except sr.RequestError as e:
+                            print(f"Could not request results; {e}")
             else:
                 engine.say("Door opened!")
                 engine.runAndWait()
