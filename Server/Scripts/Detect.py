@@ -20,6 +20,19 @@ def get_active_profile(user_id):
         print(f"Error fetching active profile: {str(e)}")
         return None
 
+def get_profiles(user_id):
+    PROFILES_URL = f'http://localhost:5000/profiles/{user_id}'
+    try:
+        response = requests.get(PROFILES_URL)
+        if response.status_code == 200:
+            return response.json()
+        else:
+            print(f"Failed to fetch profiles: {response.status_code}")
+            return None
+    except Exception as e:
+        print(f"Error fetching profiles: {str(e)}")
+        return None
+
 def capture_and_send_image():
     cap = cv2.VideoCapture(0)
 
@@ -37,6 +50,20 @@ def capture_and_send_image():
 
     print(f"Active Profile: {active_profile}")
 
+    profiles = get_profiles(USER_ID)
+    if not profiles:
+        print("No profiles found.")
+        return
+
+    active_profile_id = active_profile.get('active_profile_id')
+    allowed_people = []
+    for profile in profiles.get('profiles', []):
+        if profile.get('id') == active_profile_id:
+            allowed_people = profile.get('allowed_people', [])
+            break
+
+    print(f"Allowed People in Active Profile: {allowed_people}")
+
     while True:
         ret, frame = cap.read()
 
@@ -52,7 +79,7 @@ def capture_and_send_image():
                 'image': ('image.jpg', buffer.tobytes(), 'image/jpeg')
             }
             data = {
-                'username': active_profile.get('username', 'Unknown')  # Use active profile's username
+                'username': active_profile.get('username', 'Unknown')
             }
             response = requests.post(DETECT_URL, files=files, data=data)
             response_data = response.json()
@@ -62,9 +89,17 @@ def capture_and_send_image():
             engine = pyttsx3.init()
             engine.say(f"{closest_match} at the door!")
             engine.say(f"{closest_match} at the door!")
-            if closest_match == 'Unknown person':
-                engine.say("You are new here, please state your reasons for visiting.")
-                engine.runAndWait()
+            engine.runAndWait()
+
+            is_allowed = any(person['name'] == closest_match for person in allowed_people)
+
+            if closest_match == 'Unknown person' or not is_allowed:
+                if closest_match == 'Unknown person':
+                    engine.say("You are new here, please state your reasons for visiting.")
+                    engine.runAndWait()
+                else:
+                    engine.say("Please state your reasons for visiting.")
+                    engine.runAndWait()
 
                 recognizer = sr.Recognizer()
                 with sr.Microphone() as source:
@@ -75,7 +110,7 @@ def capture_and_send_image():
                         print(f"Reason: {reason}")
 
                         permission_data = {
-                            'name': 'Unknown',
+                            'name': closest_match if closest_match != 'Unknown person' else 'Unknown',
                             'reason': reason
                         }
                         permission_files = {
@@ -90,7 +125,6 @@ def capture_and_send_image():
             else:
                 engine.say("Door opened!")
                 engine.runAndWait()
-
             break
 
     cap.release()
