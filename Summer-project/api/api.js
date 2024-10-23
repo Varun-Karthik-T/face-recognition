@@ -16,7 +16,7 @@ export const getPeople = async () => {
 export const getNotifications = async () => {
   const response = await api.get(`/notifications/${user}`);
   return response;
-}
+};
 
 export const getHistory = async () => {
   const response = await api.get(`/history/${user}`);
@@ -54,6 +54,18 @@ export const deletePerson = async (personId) => {
 
 export const getActiveprofile = async () => {
   const response = await api.get(`/profiles/${user}/active`);
+  return response;
+};
+
+export const getPermissions = async () => {
+  const response = await api.get(`/permissions/${user}`);
+  return response;
+};
+
+export const changePermission = async (permissionId, allow) => {
+  const response = await api.put(`/permissions/${user}/${permissionId}`, {
+    allow,
+  });
   return response;
 };
 

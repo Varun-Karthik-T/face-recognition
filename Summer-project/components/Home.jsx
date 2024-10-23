@@ -15,6 +15,7 @@ import {
   getPeople,
   switchProfile,
   getNotifications,
+  getPermissions,
 } from "@/api/api";
 import { useEffect, useState, useContext } from "react";
 import { router } from "expo-router";
@@ -28,6 +29,7 @@ function Home() {
   const [selectedProfile, setSelectedProfile] = useState(null);
   const [notifications, setNotifications] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [permissions, setPermissions] = useState([]);
 
   const theme = useTheme();
 
@@ -44,6 +46,11 @@ function Home() {
 
         const notifyRes = await getNotifications();
         setNotifications(notifyRes.data.suspicious_activity);
+
+        const permissionsRes = await getPermissions();
+        setPermissions(permissionsRes.data);
+        console.log(permissionsRes.data.entries);
+
         setLoading(false);
       } catch (error) {
         console.error("Error fetching profiles or active profile", error);
