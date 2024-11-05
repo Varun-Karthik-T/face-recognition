@@ -1,0 +1,53 @@
+% Chapter 5
+
+\chapter{\uppercase{Results and Analysis}} % Main chapter title
+\label{chap5} % For referencing
+\begin{spacing}{1.5} 
+\begin{sloppypar}
+
+Both PHI 2 and PHI 3 can control the ego and seems to maintain the EGO in the road for sometime. 
+
+There is no metric of evaluation established now at this time. 
+
+\section{PHI 2 RESPONSE OUTPUT:}
+
+\shadowbox{
+\parbox{300pt}{
+\# Action
+
+take soft right and continue straight
+
+\# Reason
+
+Since there the yellow dashed line is slightly towards the right, we take a soft right and continue
+
+\# Next control signal
+
+[('turn right', 'accelerate'),('accelerate',),('accelerate',),
+('accelerate',)]}}
+
+\section{PHI 3 RESPONSE OUTPUT:}
+
+\shadowbox{
+\parbox{300pt}{
+\# Action
+\newline
+continue straight
+
+\# Reason
+
+Since the road is straight, ego will be centered with the yellow dashed lines without needing to change the direction.
+
+\# Next control Signal
+
+[('accelerate'),('accelerate'),('accelerate'),('accelerate')]
+}
+}
+
+\section{ANALYSIS}
+There is an issue of LLM Module repeating values from a dataset suggests a potential problem in the model's learning process, where it is not generalizing well but rather memorizing and regurgitating information. This could be due to various factors such as overfitting, where the model is too closely aligned with the training data, or a lack of diversity in the dataset, which does not allow the model to learn broader patterns. To address this, further experimentation is indeed crucial. This could involve implementing different model architectures, adjusting hyperparameters, or augmenting the dataset with more varied examples. 
+
+Additionally, the evaluation metrics need to be carefully considered. Traditional metrics like accuracy might not suffice, as they could give a false sense of performance if the model is simply echoing the input data. New metrics that can better capture the model's ability to generalize and provide novel, relevant responses are needed. These could include measures of diversity in the model's outputs, the ability to handle unseen data, or the relevance and usefulness of its responses in practical scenarios. A thorough examination of the model's outputs and a comparison with expected outcomes will be instrumental in diagnosing the underlying issues and guiding the enhancement of the LLM Module's capabilities.
+
+\end{sloppypar}
+ \end{spacing}
