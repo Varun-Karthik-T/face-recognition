@@ -26,7 +26,6 @@
 
 \documentclass[13 pt,a4paper]{aureportm}
 \usepackage{mathptm}\usepackage{etex}
-\reserveinserts{28}
 \renewcommand{\normalsize}{\fontsize{13 pt}{14.6 pt}\selectfont}
 %\usepackage{aunatbib}
 %\usepackage{apalikem}
@@ -49,7 +48,7 @@
 \usepackage{verbatim}
 \usepackage{ifthen}
 \usepackage{graphicx}
-\usepackage{hyperref}
+% \usepackage{hyperref} % Moved to the end
 \usepackage{epsfig}
 \usepackage{pslatex}
 \usepackage{setspace}
@@ -61,6 +60,7 @@
 \usepackage{lscape}
 \usepackage{fancybox}
 \usepackage{rotating}
+\usepackage{hyperref} % Moved here
 
 \usepackage[format=hang,labelfont=bf,textfont=bf]{caption}
 \PassOptionsToPackage{linktocpage}{hyperref}
@@ -89,25 +89,24 @@
 
 
 
- \newcounter {definition}[chapter]
-\renewcommand \thedefinition {\arabic{chapter}.\arabic{definition}}
+ \newcounter{definition}[chapter]
+\renewcommand\thedefinition{\arabic{chapter}.\arabic{definition}}
 \newenvironment{definition}
 { \refstepcounter{definition}
    {\noindent \bf Definition \arabic{chapter}.\arabic{definition}.}}
  {}
  \def\enddefinition{$\Box$}
 
- \newcounter {example}[chapter]
- \renewcommand \theexample
- {\arabic{chapter}.\arabic{example}}
+ \newcounter{example}[chapter]
+\renewcommand\theexample{\arabic{chapter}.\arabic{example}}
  \newenvironment{example}
  { \refstepcounter{example}
    {\noindent \bf Example \arabic{chapter}.\arabic{example}.}}
  {}
  \def\endexample{$\Box$}
 
- \newcounter {proposition}[chapter]
- \renewcommand \theproposition {\arabic{chapter}.\arabic{proposition}}
+ \newcounter{proposition}[chapter]
+ \renewcommand\theproposition{\arabic{chapter}.\arabic{proposition}}
  \newenvironment{proposition}
  {\refstepcounter{proposition}
    {\noindent \bf Proposition \arabic{chapter}.\arabic{proposition}. }}
@@ -119,8 +118,8 @@
 %\setcounter{secnumdepth}{3}
 \renewcommand{\baselinestretch}{1.5}
 \newcommand{\row}{i}
-\newcommand {\combined} {{C}}
-\newcommand {\mtis} {}
+\newcommand{\combined} {{C}}
+\newcommand{\mtis} {}
 
 \newboolean{showalter}
 \setboolean{showalter}{true}
@@ -165,31 +164,35 @@
 \thispagestyle{empty}
 \begin{center}
   \LARGE
-  \textbf{\uppercase{semantic-aware decision making and navigating autonomous driving agents using foundational models}} \\
+  \textbf{\uppercase{automated face recognition and suspicious activity detection enhancing home security }} \\
   \vspace{0.2\baselineskip}
   \bigsize{\textbf{A PROJECT REPORT}}\\
  \vspace{0.2\baselineskip}
 
   \normalsize{\textit{\textbf{Submitted by}}}\\
   \vspace{0.2\baselineskip}
-  {
-  \Large \textbf{K JIVITESH NARAYAN}}\\
-  \normalsize{\textbf{(2022176030)}}\\
+  
+  \Large \textbf{SALAI KOWSHIKAN S - 2022115081}\\
+  % \normalsize{\textbf{(2022115081)}}\\
+  \Large \textbf{EZHIL DHIRAVIYA J - 2022115077}\\
+  % \normalsize{\textbf{(2022115077)}}\\
+  \Large \textbf{VARUN KARTHIK T - 2022115060}\\
+  % \normalsize{\textbf{(2022115060)}}\\
   %\Large{\textbf{CANDIDATE 2}}\\
   %\Large{\textbf{CANDIDATE 3}} 
    %\vspace{0.6\baselineskip}
-  \normalsize{\textit{A report for the  dissertation-II}}\\
-  \vspace{-0.1\baselineskip}
+  % \normalsize{\textit{A report for the  dissertation-II}}\\
+  % \vspace{-0.1\baselineskip}
   \normalsize{\textit{submitted to the faculty of}} \\
   \vspace{0.1\baselineskip}
-  \normalsize\textbf{INFORMATION AND COMMUNICATION ENGINEERING}} \\  
+  \normalsize\textbf{INFORMATION AND COMMUNICATION ENGINEERING} \\  
  
   \normalsize{\textit{in partial fulfillment \\ for the award of the degree}}\\
   \normalsize{\textit{\textbf{of}}}\\
 \vspace{.1\baselineskip}
-  \bigsize{{\textbf{MASTER OF TECHNOLOGY}}}\\
+  \bigsize{{\textbf{BACHELOR OF TECHNOLOGY}}}\\
   \normalsize{\textit{\textbf{in}}}\\
-  \bigsize{{\textbf{INFORMATION TECHNOLOGY (SPLN IN AI AND DS)}}}\\
+  \bigsize{{\textbf{INFORMATION TECHNOLOGY}}}\\
 \end{center}
   \begin{center}
    %\includegraphics[width=26mm,height=25mm]{auemblem.pdf}   \\
@@ -199,7 +202,7 @@
   \normalsize{\textbf{ANNA UNIVERSITY}}\\
   \normalsize{\textbf{CHENNAI  600 025}}\\
   
-  \normalsize{\textbf{MAY 2024 }}
+  \normalsize{\textbf{NOVEMBER 2024 }}
  \end{center}
 \pagebreak
 
@@ -215,8 +218,8 @@ BONAFIDE CERTIFICATE}
 
 \begin{spacing}{1.5}
   \begin{sloppypar}
-  \fontsize{13}{14.5}\selectfont Certified that this project report titled \textbf{“SEMANTIC-AWARE DECISION MAKING AND NAVIGATING AUTONOMOUS DRIVING AGENTS USING FOUNDATIONAL MODELS”} is the bonafide
-work of \textbf{K JIVITESH NARAYAN (2022176030)} who carried out project work under
+  \fontsize{13}{14.5}\selectfont Certified that this project report titled \textbf{“AUTOMATED FACE RECOGNITION AND SUSPICIOUS ACTIVITY DETECTION ENHANCING HOME SECURITY”} is the bonafide
+work of \textbf{SALAI KOWSHIKAN S (2022115081), EZHIL DHIRAVIYA J (2022115077), and VARUN KARTHIK T (2022115060), } who carried out project work under
 my supervision. Certified further that to the best of my knowledge and belief, the
 work reported herein does not form part of any other thesis or dissertation on the
 basis of which a degree or an award was conferred on an earlier occasion on this
@@ -228,7 +231,7 @@ or any other candidate.
  \parbox[t]{\datewidth}{\small{\textbf{PLACE:CHENNAI }}\\
  \small{\textbf{DATE: }}}
  \hfill
- \parbox[t]{5 cm}{\small{\textbf{Dr. M. VIJAYALAKSHMI}} \\
+ \parbox[t]{5 cm}{\small{\textbf{Dr. K. VANI}} \\
  \small{\textbf{PROFESSOR}}\\
  \small{\textbf{PROJECT GUIDE}}\\
  \small{\textbf{DEPARTMENT OF IST, CEG}}\\
@@ -240,7 +243,7 @@ or any other candidate.
 \begin{center}
  \small{\textbf{COUNTERSIGNED}}\\ 
   \vspace{1.5 cm}
-  \textbf{\small{Dr. S. SWAMYNATHAN}}\\ 
+  \textbf{\small{Dr.S. SWAMYNATHAN}}\\ 
   \small{\textbf{HEAD OF THE DEPARTMENT}}\\
  \small{\textbf{DEPARTMENT OF INFORMATION SCIENCE AND TECHNOLOGY}}\\
  \small{\textbf{COLLEGE OF ENGINEERING GUINDY}}\\
