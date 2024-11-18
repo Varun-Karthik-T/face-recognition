@@ -29,6 +29,8 @@ import { useEffect, useState, useContext } from "react";
 import { router } from "expo-router";
 import Notify from "@/api/notify";
 import Loader from "./Loader";
+import { DataContext } from "@/contexts/DataContext";
+
 
 function Home() {
   const [profiles, setProfiles] = useState([]);
@@ -36,13 +38,13 @@ function Home() {
   const [modalVisible, setModalVisible] = useState(false);
   const [selectedProfile, setSelectedProfile] = useState(null);
   const [notifications, setNotifications] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(true);
   const [permissions, setPermissions] = useState([]);
-
+  const{setLoading} = useContext(DataContext);
   const theme = useTheme();
 
   useEffect(() => {
-    setLoading(true);
+    setIsLoading(true);
 
     const fetchData = async () => {
       try {
@@ -58,12 +60,10 @@ function Home() {
         const permissionsRes = await getPermissions();
         setPermissions(permissionsRes.data.entries);
 
-        setLoading(false);
       } catch (error) {
         console.error("Error fetching profiles or active profile", error);
-        setLoading(false);
       } finally {
-        setLoading(false);
+        setIsLoading(false);
       }
     };
 
@@ -88,18 +88,21 @@ function Home() {
 
   const handlePermissionChange = async (permissionId, allow) => {
     try {
+      setLoading(true)
       await changePermission(permissionId, allow);
       const permissionsRes = await getPermissions();
       setPermissions(permissionsRes.data.entries);
     } catch (error) {
       console.error("Failed to change permission", error);
+    }finally{
+      setLoading(false);
     }
   };
 
-  if (loading) {
+  if (isLoading) {
     return (
       <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-        <ActivityIndicator animating={loading} size="large" />
+        <ActivityIndicator animating={isLoading} size="large" />
         <Text>Fetching Profiles</Text>
       </View>
     );
@@ -174,6 +177,9 @@ function Home() {
                 </View>
               </View>
             ))}
+            {permissions.length==0 && (
+              <Text>Nothing for now</Text>
+            )}
           </Card.Content>
         </Card>
 
